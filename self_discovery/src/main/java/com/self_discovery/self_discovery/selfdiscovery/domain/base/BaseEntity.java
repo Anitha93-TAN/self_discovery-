@@ -38,5 +38,6 @@ public class BaseEntity {
     private String updatedBy;
 
     private String name;
+    private int age;
 
 }
