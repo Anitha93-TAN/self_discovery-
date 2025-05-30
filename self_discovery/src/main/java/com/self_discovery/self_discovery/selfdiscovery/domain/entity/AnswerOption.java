@@ -1,5 +1,6 @@
 package com.self_discovery.self_discovery.selfdiscovery.domain.entity;
 
+import com.self_discovery.self_discovery.selfdiscovery.domain.base.BaseEntity;
 import com.self_discovery.self_discovery.selfdiscovery.domain.enums.OptionValue;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,7 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Table(name = "answer_option")
-public class AnswerOption {
+public class AnswerOption extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

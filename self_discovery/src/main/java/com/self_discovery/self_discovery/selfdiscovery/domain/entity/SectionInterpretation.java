@@ -1,5 +1,6 @@
 package com.self_discovery.self_discovery.selfdiscovery.domain.entity;
 
+import com.self_discovery.self_discovery.selfdiscovery.domain.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "section_interpretation")
-public class SectionInterpretation {
+public class SectionInterpretation extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

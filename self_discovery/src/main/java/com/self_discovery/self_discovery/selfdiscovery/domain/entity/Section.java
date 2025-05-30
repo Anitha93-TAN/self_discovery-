@@ -1,5 +1,6 @@
 package com.self_discovery.self_discovery.selfdiscovery.domain.entity;
 
+import com.self_discovery.self_discovery.selfdiscovery.domain.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -10,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "section")
-public class Section {
+public class Section extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

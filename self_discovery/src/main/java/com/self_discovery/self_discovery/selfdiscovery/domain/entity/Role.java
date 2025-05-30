@@ -1,4 +1,5 @@
 package com.self_discovery.self_discovery.selfdiscovery.domain.entity;
+import com.self_discovery.self_discovery.selfdiscovery.domain.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +11,7 @@ import java.util.*;
 @AllArgsConstructor//used to create the parameterised constructor
 @Entity//spring mark this class as entity class and used to create the table in db by using the fields in the class.
 @Table(name = "role")//it will create the table in the db
-public class Role {
+public class Role extends BaseEntity {
 
     @Id //make the field as primary key
     @GeneratedValue(strategy = GenerationType.IDENTITY)//increment the primary key field.
