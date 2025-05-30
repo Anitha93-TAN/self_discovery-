@@ -37,4 +37,6 @@ public class BaseEntity {
     @Column(name = "updated_by", insertable = false) // Converted to snake_case
     private String updatedBy;
 
+    private String name;
+
 }
