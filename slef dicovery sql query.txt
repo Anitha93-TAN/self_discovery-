@@ -1,0 +1,126 @@
+
+
+Table Role {
+  role_id int [pk, increment]
+  name varchar(50) [unique, not null]
+  role_code varchar(20) [unique, not null]
+  description text
+}
+
+Table Admin {
+  admin_id int [pk, increment]
+  username varchar(100) [unique, not null]
+  email varchar(150) [unique, not null]
+  password_hash varchar(255) [not null]
+  phone_number varchar(15)
+  role_id int [ref: > Role.role_id, not null]
+  created_at timestamp
+}
+
+Table User {
+  user_id int [pk, increment]
+  username varchar(100) [unique, not null]
+  email varchar(150) [unique, not null]
+  password_hash varchar(255) [not null]
+  phone_number varchar(15)
+  role_id int [ref: > Role.role_id, not null]
+  created_at timestamp
+}
+
+
+Table Test {
+  test_id int [pk, increment]
+  title varchar(255) [not null]
+  description text
+  link_expiry_date date
+  created_at timestamp
+  created_by varchar(100)
+  updated_at timestamp
+  updated_by varchar(100)
+}
+
+Table Section {
+  section_id int [pk, increment]
+  test_id int [ref: > Test.test_id, not null]
+  title varchar(255) [not null]
+  order int [not null]
+  randomize_questions boolean [default: false]
+  created_at timestamp
+}
+
+
+Table Question {
+  question_id int [pk, increment]
+  section_id int [ref: > Section.section_id, not null]
+  question_text text [not null]
+  answer_type ENUM('single_choice', 'multi_choice', 'rating') [not null]
+  order int [not null]
+  created_at timestamp
+}
+
+Table AnswerOption {
+  answer_option_id int [pk, increment]
+  answer_text varchar(255) [not null]
+  option_value ENUM('YES', 'NO', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'TEN')
+  score int [default: 0]
+  created_at timestamp
+}
+
+Table Question_AnswerOption {
+  question_id int [ref: > Question.question_id, not null]
+  answer_option_id int [ref: > AnswerOption.answer_option_id, not null]
+
+  Indexes {
+    (question_id, answer_option_id) [pk]
+  }
+}
+
+
+Table Interpretation {
+  interpretation_id int [pk, increment]
+  test_id int [ref: > Test.test_id, not null]
+  min_score int [not null]
+  max_score int [not null]
+  description text [not null]
+}
+
+Table Recommendation {
+  recommendation_id int [pk, increment]
+  test_id int [ref: > Test.test_id, not null]
+  min_score int [not null]
+  max_score int [not null]
+  recommendation_text text [not null]
+}
+
+Table SectionInterpretation {
+  section_interpretation_id int [pk, increment]
+  section_id int [ref: > Section.section_id, not null]
+  min_score int [not null]
+  max_score int [not null]
+  description text [not null]
+}
+
+Table QuestionResponse {
+  user_response_id int [pk, increment]
+  question_id int [ref: > Question.question_id, not null]
+  answer_option_id int [ref: > AnswerOption.answer_option_id]
+  user_id int [ref: > User.user_id,not null]
+  rating_value int
+  created_at timestamp
+}
+Table SectionResponse {
+  section_response_id int [pk, increment]
+  user_id int [ref: > User.user_id]  
+  section_id int [ref: > Section.section_id, not null]
+  section_score int [not null]
+  created_at timestamp
+}
+
+Table TestResult {
+  result_id int [pk, increment]                             
+  test_id int [ref: > Test.test_id, not null]
+  user_id int [ref: > User.user_id]  
+  total_score int [not null]
+  created_at timestamp
+}
+
