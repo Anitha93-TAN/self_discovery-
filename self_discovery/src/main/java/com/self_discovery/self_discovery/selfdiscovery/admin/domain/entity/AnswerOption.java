@@ -1,12 +1,15 @@
-package com.self_discovery.self_discovery.selfdiscovery.domain.entity;
+package com.self_discovery.self_discovery.selfdiscovery.admin.domain.entity;
 
-import com.self_discovery.self_discovery.selfdiscovery.domain.base.BaseEntity;
-import com.self_discovery.self_discovery.selfdiscovery.domain.enums.OptionValue;
+
+
+
+import com.self_discovery.self_discovery.selfdiscovery.admin.domain.enums.OptionValue;
+import com.self_discovery.self_discovery.selfdiscovery.public_folder.domain.base.BaseEntity;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 
 import java.util.Set;
 @Data

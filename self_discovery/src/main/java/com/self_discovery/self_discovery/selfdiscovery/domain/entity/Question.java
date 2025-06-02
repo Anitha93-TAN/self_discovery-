@@ -1,14 +1,13 @@
 package com.self_discovery.self_discovery.selfdiscovery.domain.entity;
 
 import com.self_discovery.self_discovery.selfdiscovery.domain.base.BaseEntity;
-import com.self_discovery.self_discovery.selfdiscovery.domain.entity.AnswerOption;
+import com.self_discovery.self_discovery.selfdiscovery.admin.domain.entity.AnswerOption;
 import com.self_discovery.self_discovery.selfdiscovery.domain.enums.AnswerType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
 import java.util.Set;
 @Data
 @Entity

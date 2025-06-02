@@ -2,7 +2,6 @@ package com.self_discovery.self_discovery.selfdiscovery.admin.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.self_discovery.self_discovery.selfdiscovery.public_folder.domain.base.BaseEntity;
-import com.self_discovery.self_discovery.selfdiscovery.public_folder.domain.entity.AnswerOption;
 import com.self_discovery.self_discovery.selfdiscovery.public_folder.domain.enums.AnswerType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
