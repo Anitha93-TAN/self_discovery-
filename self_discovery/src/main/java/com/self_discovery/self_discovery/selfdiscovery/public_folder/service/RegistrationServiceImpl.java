@@ -8,6 +8,7 @@ import com.self_discovery.self_discovery.selfdiscovery.public_folder.repository.
 import com.self_discovery.self_discovery.selfdiscovery.public_folder.repository.AdminRepository;
 import com.self_discovery.self_discovery.selfdiscovery.public_folder.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 @Service
