@@ -1,9 +1,10 @@
 package com.self_discovery.self_discovery.selfdiscovery.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.self_discovery.self_discovery.selfdiscovery.domain.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
+
 
 @Data
 @NoArgsConstructor
@@ -31,6 +32,7 @@ public class Admin extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
+    @JsonBackReference
     private Role role;
 
 }

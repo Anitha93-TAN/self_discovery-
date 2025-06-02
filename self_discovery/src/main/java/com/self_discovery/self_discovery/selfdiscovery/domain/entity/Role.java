@@ -1,12 +1,12 @@
 package com.self_discovery.self_discovery.selfdiscovery.domain.entity;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.self_discovery.self_discovery.selfdiscovery.domain.base.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.util.*;
 
-@Data //contains getter,setter and tostring methods from Lombok
+@Data
 @NoArgsConstructor //it used to create default constructor/constructor without parameter
 @AllArgsConstructor//used to create the parameterised constructor
 @Entity//spring mark this class as entity class and used to create the table in db by using the fields in the class.
@@ -29,9 +29,11 @@ public class Role extends BaseEntity {
 
     //mapping
     @OneToMany(mappedBy = "role")//one role many admin
+    @JsonManagedReference
     private List<Admin> admins = new ArrayList<>();
 
     @OneToMany(mappedBy = "role")
+    @JsonManagedReference
     private List<User> users = new ArrayList<>();
 
 
