@@ -1,6 +1,6 @@
 package com.self_discovery.self_discovery.selfdiscovery.public_folder.domain.entity;
 
-import com.self_discovery.self_discovery.selfdiscovery.admin.domain.entity.Section;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.Section;
 import com.self_discovery.self_discovery.selfdiscovery.public_folder.domain.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
