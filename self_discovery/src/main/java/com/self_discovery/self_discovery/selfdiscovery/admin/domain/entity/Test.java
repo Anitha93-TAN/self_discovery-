@@ -29,6 +29,11 @@ public class Test extends BaseEntity {
     private LocalDate linkExpiryDate;
 
     @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
-    @JsonManagedReference
     private List<Section> sections;
+
+    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
+    private List<Interpretation> interpretations;
+
+    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
+    private List<Recommendation> recommendations;
 }

@@ -39,7 +39,7 @@ public class Question extends BaseEntity {
     private int questionOrder;
 
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "question_answer_option",
             joinColumns = @JoinColumn(name = "question_id"),

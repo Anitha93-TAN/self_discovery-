@@ -21,7 +21,6 @@ public class Section extends BaseEntity {
     private int sectionId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference
     @JoinColumn(name = "test_id", nullable = false)
     private Test test;
 
@@ -35,6 +34,9 @@ public class Section extends BaseEntity {
     private boolean randomizeQuestions = false;
 
     @OneToMany(mappedBy = "section", cascade = CascadeType.ALL)
-    @JsonManagedReference
     private List<Question> questions;
+
+    @OneToMany(mappedBy = "section")
+    private List<SectionInterpretation> sectionInterpretations;
+
 }
