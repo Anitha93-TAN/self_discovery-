@@ -10,5 +10,5 @@ public class SectionRequestDTO {
     private int sectionOrder;
     private boolean randomizeQuestions;
     private List<QuestionRequestDTO> questions;
-    private List<SectionInterpretationRequestDTO> sectionInterpretationRequestDTOS;
+    private List<SectionInterpretationRequestDTO> sectionInterpretation;
 }

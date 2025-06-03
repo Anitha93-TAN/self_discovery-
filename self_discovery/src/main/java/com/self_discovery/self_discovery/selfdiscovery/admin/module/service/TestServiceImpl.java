@@ -82,8 +82,8 @@ public class TestServiceImpl implements TestService {
                 section.setQuestions(questions);
 
                 List<SectionInterpretation> sectionInterpretations = new ArrayList<>();
-                if (sectionDTO.getSectionInterpretationRequestDTOS() != null) {
-                    for (SectionInterpretationRequestDTO interpDTO : sectionDTO.getSectionInterpretationRequestDTOS()) {
+                if (sectionDTO.getSectionInterpretation() != null) {
+                    for (SectionInterpretationRequestDTO interpDTO : sectionDTO.getSectionInterpretation()) {
                         SectionInterpretation sectionInterpretation = new SectionInterpretation();
                         sectionInterpretation.setMinScore(interpDTO.getMinScore());
                         sectionInterpretation.setMaxScore(interpDTO.getMaxScore());
