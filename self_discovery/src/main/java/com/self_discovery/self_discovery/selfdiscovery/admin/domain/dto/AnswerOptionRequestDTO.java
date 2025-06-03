@@ -5,7 +5,7 @@ import com.self_discovery.self_discovery.selfdiscovery.admin.domain.enums.Option
 import lombok.Data;
 
 import java.util.List;
-
+//Request DTO class
 @Data
 public class AnswerOptionRequestDTO {
     private String answerText;
