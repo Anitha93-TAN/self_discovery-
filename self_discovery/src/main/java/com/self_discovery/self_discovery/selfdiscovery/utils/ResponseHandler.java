@@ -1,5 +1,7 @@
 package com.self_discovery.self_discovery.selfdiscovery.utils;
 
+import java.util.List;
+
 public interface ResponseHandler<T> {
 	ApiResponse<T> success(T data, String message, int status);
 
@@ -9,4 +11,6 @@ public interface ResponseHandler<T> {
 
 
 	ApiResponse<T> error(String message, int status);
+
+
 }

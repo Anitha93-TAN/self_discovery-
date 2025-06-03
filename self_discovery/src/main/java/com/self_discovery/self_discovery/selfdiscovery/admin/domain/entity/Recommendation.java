@@ -16,7 +16,7 @@ public class Recommendation extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "recommendation_id")
-    private int recommendationId;
+    private Long recommendationId;
 
     @ManyToOne
     @JoinColumn(name = "test_id", nullable = false)

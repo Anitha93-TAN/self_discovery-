@@ -3,6 +3,7 @@ package com.self_discovery.self_discovery.selfdiscovery.admin.module.service;
 import com.self_discovery.self_discovery.selfdiscovery.admin.domain.dtos.*;
 import com.self_discovery.self_discovery.selfdiscovery.admin.domain.entity.*;
 import com.self_discovery.self_discovery.selfdiscovery.admin.domain.enums.OptionValue;
+import com.self_discovery.self_discovery.selfdiscovery.admin.module.repository.AnswerOptionRepository;
 import com.self_discovery.self_discovery.selfdiscovery.admin.module.repository.TestRepository;
 import com.self_discovery.self_discovery.selfdiscovery.public_folder.domain.enums.AnswerType;
 import com.self_discovery.self_discovery.selfdiscovery.utils.ApiResponse;
@@ -10,18 +11,26 @@ import com.self_discovery.self_discovery.selfdiscovery.utils.HttpStatusCodes;
 import com.self_discovery.self_discovery.selfdiscovery.utils.ResponseHandler;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class TestServiceImpl implements TestService {
 
+    @Autowired
     private final TestRepository testRepository;
+
+    @Autowired
     private final ResponseHandler<TestResponseDTO> responseHandler;
+
+    @Autowired
+    private final AnswerOptionRepository answerOptionRepository;
+
+    @Autowired
+    private ResponseHandler<List<TestResponseDTO>> listResponseHandler;
 
     @Override
     @Transactional
@@ -30,6 +39,17 @@ public class TestServiceImpl implements TestService {
         Test savedTest = testRepository.save(testEntity);
         TestResponseDTO responseDTO = mapToTestResponseDTO(savedTest);
         return responseHandler.success(responseDTO, "Test created successfully", HttpStatusCodes.OK);
+    }
+
+    @Override
+    @Transactional
+    public ApiResponse<List<TestResponseDTO>> getAllTests() {
+        List<Test> tests = testRepository.findAll();
+        List<TestResponseDTO> testDTOs = new ArrayList<>();
+        for (Test test : tests) {
+            testDTOs.add(mapToTestResponseDTO(test));
+        }
+        return listResponseHandler.success(testDTOs, "All tests fetched successfully", HttpStatusCodes.OK);
     }
 
     private Test mapToTestEntity(TestRequestDTO dto) {
@@ -53,29 +73,44 @@ public class TestServiceImpl implements TestService {
                         Question question = new Question();
                         question.setQuestionText(questionDTO.getQuestionText());
                         try {
-                            question.setAnswerType(AnswerType.valueOf(questionDTO.getAnswerType()));
+                            question.setAnswerType(questionDTO.getAnswerType());
                         } catch (IllegalArgumentException e) {
                             throw new IllegalArgumentException("Invalid AnswerType: " + questionDTO.getAnswerType());
                         }
                         question.setQuestionOrder(questionDTO.getQuestionOrder());
                         question.setSection(section);
 
-                        List<AnswerOption> options = new ArrayList<>();
+                        Set<AnswerOption> options = new HashSet<>();
                         if (questionDTO.getAnswerOptions() != null) {
                             for (AnswerOptionRequestDTO optionDTO : questionDTO.getAnswerOptions()) {
-                                AnswerOption option = new AnswerOption();
-                                option.setAnswerText(optionDTO.getAnswerText());
-                                try {
-                                    option.setOptionValue(OptionValue.valueOf(optionDTO.getOptionValue()));
-                                } catch (IllegalArgumentException e) {
-                                    throw new IllegalArgumentException("Invalid OptionValue: " + optionDTO.getOptionValue());
+                                AnswerOption option;
+
+                                if (optionDTO.getOptionValue() != null) {
+                                    // Try to reuse existing AnswerOption by OptionValue enum
+                                    option = answerOptionRepository.findByOptionValue(optionDTO.getOptionValue())
+                                            .orElseGet(() -> {
+                                                AnswerOption newOption = new AnswerOption();
+                                                newOption.setAnswerText(optionDTO.getAnswerText());
+                                                newOption.setOptionValue(optionDTO.getOptionValue());
+                                                newOption.setScore(optionDTO.getScore());
+                                                newOption.setQuestions(new HashSet<>());
+                                                return newOption;
+                                            });
+                                } else {
+                                    // Custom option (no enum), create new
+                                    option = new AnswerOption();
+                                    option.setAnswerText(optionDTO.getAnswerText());
+                                    option.setOptionValue(null);
+                                    option.setScore(optionDTO.getScore());
+                                    option.setQuestions(new HashSet<>());
                                 }
-                                option.setScore(optionDTO.getScore());
-                                //option.setQuestion(question); // Maintain bidirectional mapping
+
+                                // Maintain bidirectional mapping
+                                option.getQuestions().add(question);
                                 options.add(option);
                             }
                         }
-                        question.setAnswerOptions(new HashSet<>(options));
+                        question.setAnswerOptions(options);
                         questions.add(question);
                     }
                 }
@@ -123,7 +158,7 @@ public class TestServiceImpl implements TestService {
                         QuestionResponseDTO questionDTO = new QuestionResponseDTO();
                         questionDTO.setQuestionId(question.getQuestionId());
                         questionDTO.setQuestionText(question.getQuestionText());
-                        questionDTO.setAnswerType(String.valueOf(question.getAnswerType()));
+                        questionDTO.setAnswerType(question.getAnswerType());
                         questionDTO.setQuestionOrder(question.getQuestionOrder());
 
                         List<AnswerOptionResponseDTO> optionDTOs = new ArrayList<>();
@@ -132,7 +167,7 @@ public class TestServiceImpl implements TestService {
                                 AnswerOptionResponseDTO optionDTO = new AnswerOptionResponseDTO();
                                 optionDTO.setAnswerOptionId(option.getAnswerOptionId());
                                 optionDTO.setAnswerText(option.getAnswerText());
-                                optionDTO.setOptionValue(String.valueOf(option.getOptionValue()));
+                                optionDTO.setOptionValue(option.getOptionValue());
                                 optionDTO.setScore(option.getScore());
                                 optionDTOs.add(optionDTO);
                             }
@@ -148,7 +183,7 @@ public class TestServiceImpl implements TestService {
                     for (SectionInterpretation si : section.getSectionInterpretations()) {
                         SectionInterpretationResponseDTO siDTO = new SectionInterpretationResponseDTO();
                         siDTO.setSectionInterpretationId(si.getSectionInterpretationId());
-                        siDTO.setSectionId(si.getSection().getSectionId());
+                        siDTO.setSectionId(Math.toIntExact(si.getSection().getSectionId()));
                         siDTO.setMinScore(si.getMinScore());
                         siDTO.setMaxScore(si.getMaxScore());
                         siDTO.setDescription(si.getDescription());

@@ -17,7 +17,7 @@ public class Test extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="test_id")
-    private int testId;
+    private Long testId;
 
     @Column(name="title",nullable = false, length = 255)
     private String title;

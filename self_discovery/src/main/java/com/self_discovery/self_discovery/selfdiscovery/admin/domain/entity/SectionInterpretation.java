@@ -18,7 +18,7 @@ public class SectionInterpretation extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "section_interpretation_id")
-    private int sectionInterpretationId;
+    private Long sectionInterpretationId;
 
     @ManyToOne
     @JoinColumn(name = "section_id", nullable = false)

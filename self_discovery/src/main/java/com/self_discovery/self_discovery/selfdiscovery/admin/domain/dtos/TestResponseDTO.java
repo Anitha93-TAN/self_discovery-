@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class TestResponseDTO {
-    private Integer testId;
+    private Long testId;
     private String title;
     private String description;
     private LocalDate linkExpiryDate;

@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -21,7 +22,7 @@ public class AnswerOption extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "answer_option_id")
-    private int answerOptionId;
+    private Long answerOptionId;
 
     // For custom MCQ text option
     @Column(name = "answer_text", nullable = true)  // nullable true, since enum or text exclusive
@@ -35,8 +36,9 @@ public class AnswerOption extends BaseEntity {
     @Column(name = "score")
     private int score;
 
-    @ManyToMany(mappedBy = "answerOptions", cascade = CascadeType.ALL)
-    private Set<Question> questions;
+    @ManyToMany(mappedBy = "answerOptions")
+    private Set<Question> questions = new HashSet<>(); // Always initialize to avoid null
+
 
 
 }

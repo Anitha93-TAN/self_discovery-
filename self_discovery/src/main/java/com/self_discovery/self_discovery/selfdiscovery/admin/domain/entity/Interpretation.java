@@ -16,7 +16,7 @@ public class Interpretation extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "interpretation_id")
-    private int interpretationId;
+    private Long interpretationId;
 
     @ManyToOne
     @JoinColumn(name = "test_id", nullable = false)

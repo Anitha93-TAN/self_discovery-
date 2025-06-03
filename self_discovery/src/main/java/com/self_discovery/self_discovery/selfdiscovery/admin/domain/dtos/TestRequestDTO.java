@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class TestRequestDTO {
-    private Integer testId;  // for update, null for create
+    private Long testId;  // for update, null for create
     private String title;
     private String description;
     private LocalDate linkExpiryDate;

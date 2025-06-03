@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class RecommendationResponseDTO {
-    private Integer recommendationId;
+    private Long recommendationId;
     private int minScore;
     private int maxScore;
     private String recommendationText;

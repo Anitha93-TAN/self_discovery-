@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class SectionInterpretationResponseDTO {
-    private int sectionInterpretationId;
+    private Long sectionInterpretationId;
     private int sectionId;
     private int minScore;
     private int maxScore;
