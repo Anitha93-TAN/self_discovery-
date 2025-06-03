@@ -1,8 +1,7 @@
 package com.self_discovery.self_discovery.selfdiscovery.admin.module.service;
 
-import com.self_discovery.self_discovery.selfdiscovery.admin.domain.dto.AnswerOptionRequestDTO;
-import com.self_discovery.self_discovery.selfdiscovery.admin.domain.dto.AnswerOptionResponseDTO;
 
+import com.self_discovery.self_discovery.selfdiscovery.admin.domain.dto.AnswerOptionRequestDTO;
 import com.self_discovery.self_discovery.selfdiscovery.admin.domain.entity.AnswerOption;
 import com.self_discovery.self_discovery.selfdiscovery.admin.domain.entity.Question;
 import com.self_discovery.self_discovery.selfdiscovery.admin.module.repository.AnswerOptionRepository;
@@ -10,10 +9,9 @@ import com.self_discovery.self_discovery.selfdiscovery.admin.module.repository.Q
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class AnswerOptionServiceImpl implements AnswerOptionService {
@@ -25,40 +23,33 @@ public class AnswerOptionServiceImpl implements AnswerOptionService {
     private QuestionRepository questionRepository;
 
     @Override
-    public AnswerOptionResponseDTO createAnswerOption(AnswerOptionRequestDTO requestDTO) {
+    public AnswerOption save(AnswerOptionRequestDTO dto) {
         AnswerOption answerOption = new AnswerOption();
-        answerOption.setAnswerText(requestDTO.getAnswerText());
-        answerOption.setOptionValue(requestDTO.getOptionValue());
-        answerOption.setScore(requestDTO.getScore());
+        answerOption.setAnswerText(dto.getAnswerText());
+        answerOption.setOptionValue(dto.getOptionValue());
+        answerOption.setScore(dto.getScore());
 
-        if (requestDTO.getQuestionIds() != null) {
-            Set<Question> questions = requestDTO.getQuestionIds().stream()
-                    .map(id -> questionRepository.findById(id).orElse(null))
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toSet());
-            answerOption.setQuestions(questions);
+        Optional<Question> questionOpt = questionRepository.findById(dto.getQuestionId());
+        if (questionOpt.isEmpty()) {
+            throw new RuntimeException("Question with id " + dto.getQuestionId() + " not found");
         }
 
-        AnswerOption saved = answerOptionRepository.save(answerOption);
+        Question question = questionOpt.get();
 
-        // Convert to ResponseDTO
-        AnswerOptionResponseDTO responseDTO = new AnswerOptionResponseDTO();
-        responseDTO.setAnswerOptionId(saved.getAnswerOptionId());
-        responseDTO.setAnswerText(saved.getAnswerText());
-        responseDTO.setOptionValue(saved.getOptionValue());
-        responseDTO.setScore(saved.getScore());
-
-        if (saved.getQuestions() != null) {
-            List<AnswerOptionResponseDTO.QuestionInfo> questionInfos = saved.getQuestions().stream().map(q -> {
-                AnswerOptionResponseDTO.QuestionInfo info = new AnswerOptionResponseDTO.QuestionInfo();
-                //info.setQuestionId(q.getId());
-                info.setQuestionId(q.getQuestionId());
-                info.setQuestionText(q.getQuestionText());
-                return info;
-            }).collect(Collectors.toList());
-            responseDTO.setQuestions(questionInfos);
+        // Link answerOption with question
+        Set<AnswerOption> answerOptions = question.getAnswerOptions();
+        if (answerOptions == null) {
+            answerOptions = new HashSet<>();
         }
+        answerOptions.add(answerOption);
+        question.setAnswerOptions(answerOptions);
 
-        return responseDTO;
+        // Save answerOption first to get the ID generated
+        answerOption = answerOptionRepository.save(answerOption);
+
+        // Save updated question with new answerOption
+        questionRepository.save(question);
+
+        return answerOption;
     }
 }

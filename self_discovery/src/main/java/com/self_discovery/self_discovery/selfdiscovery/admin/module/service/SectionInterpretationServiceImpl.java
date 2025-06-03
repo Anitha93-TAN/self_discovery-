@@ -7,9 +7,11 @@ import com.self_discovery.self_discovery.selfdiscovery.admin.domain.entity.Secti
 import com.self_discovery.self_discovery.selfdiscovery.admin.module.repository.SectionInterpretationRepository;
 import com.self_discovery.self_discovery.selfdiscovery.admin.module.repository.SectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.stereotype.Service;
 import java.util.Optional;
 
+
+@Service
 public class SectionInterpretationServiceImpl implements SectionInterpretationService {
 
     @Autowired
