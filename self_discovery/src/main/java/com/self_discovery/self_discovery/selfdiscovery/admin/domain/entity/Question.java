@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
 import java.util.Set;
 
 
@@ -41,14 +40,13 @@ public class Question extends BaseEntity {
     private int questionOrder;
 
 
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }) // Avoid ALL to prevent accidental deletes
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "question_answer_option",
             joinColumns = @JoinColumn(name = "question_id"),
             inverseJoinColumns = @JoinColumn(name = "answer_option_id")
     )
-    private Set<AnswerOption> answerOptions = new HashSet<>();
-
+    private Set<AnswerOption> answerOptions;
 
 
 }

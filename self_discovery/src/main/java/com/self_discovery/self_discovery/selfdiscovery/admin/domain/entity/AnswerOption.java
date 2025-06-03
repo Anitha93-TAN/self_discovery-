@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -36,9 +35,8 @@ public class AnswerOption extends BaseEntity {
     @Column(name = "score")
     private int score;
 
-    @ManyToMany(mappedBy = "answerOptions")
-    private Set<Question> questions = new HashSet<>(); // Always initialize to avoid null
-
+    @ManyToMany(mappedBy = "answerOptions", cascade = CascadeType.ALL)
+    private Set<Question> questions;
 
 
 }

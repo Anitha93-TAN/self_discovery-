@@ -2,10 +2,7 @@ package com.self_discovery.self_discovery.selfdiscovery.admin.module.service;
 
 import com.self_discovery.self_discovery.selfdiscovery.admin.domain.dtos.*;
 import com.self_discovery.self_discovery.selfdiscovery.admin.domain.entity.*;
-import com.self_discovery.self_discovery.selfdiscovery.admin.domain.enums.OptionValue;
-import com.self_discovery.self_discovery.selfdiscovery.admin.module.repository.AnswerOptionRepository;
 import com.self_discovery.self_discovery.selfdiscovery.admin.module.repository.TestRepository;
-import com.self_discovery.self_discovery.selfdiscovery.public_folder.domain.enums.AnswerType;
 import com.self_discovery.self_discovery.selfdiscovery.utils.ApiResponse;
 import com.self_discovery.self_discovery.selfdiscovery.utils.HttpStatusCodes;
 import com.self_discovery.self_discovery.selfdiscovery.utils.ResponseHandler;
@@ -14,20 +11,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class TestServiceImpl implements TestService {
 
-    @Autowired
     private final TestRepository testRepository;
-
-    @Autowired
     private final ResponseHandler<TestResponseDTO> responseHandler;
-
-    @Autowired
-    private final AnswerOptionRepository answerOptionRepository;
 
     @Autowired
     private ResponseHandler<List<TestResponseDTO>> listResponseHandler;
@@ -80,37 +73,22 @@ public class TestServiceImpl implements TestService {
                         question.setQuestionOrder(questionDTO.getQuestionOrder());
                         question.setSection(section);
 
-                        Set<AnswerOption> options = new HashSet<>();
+                        List<AnswerOption> options = new ArrayList<>();
                         if (questionDTO.getAnswerOptions() != null) {
                             for (AnswerOptionRequestDTO optionDTO : questionDTO.getAnswerOptions()) {
-                                AnswerOption option;
-
-                                if (optionDTO.getOptionValue() != null) {
-                                    // Try to reuse existing AnswerOption by OptionValue enum
-                                    option = answerOptionRepository.findByOptionValue(optionDTO.getOptionValue())
-                                            .orElseGet(() -> {
-                                                AnswerOption newOption = new AnswerOption();
-                                                newOption.setAnswerText(optionDTO.getAnswerText());
-                                                newOption.setOptionValue(optionDTO.getOptionValue());
-                                                newOption.setScore(optionDTO.getScore());
-                                                newOption.setQuestions(new HashSet<>());
-                                                return newOption;
-                                            });
-                                } else {
-                                    // Custom option (no enum), create new
-                                    option = new AnswerOption();
-                                    option.setAnswerText(optionDTO.getAnswerText());
-                                    option.setOptionValue(null);
-                                    option.setScore(optionDTO.getScore());
-                                    option.setQuestions(new HashSet<>());
+                                AnswerOption option = new AnswerOption();
+                                option.setAnswerText(optionDTO.getAnswerText());
+                                try {
+                                    option.setOptionValue(optionDTO.getOptionValue());
+                                } catch (IllegalArgumentException e) {
+                                    throw new IllegalArgumentException("Invalid OptionValue: " + optionDTO.getOptionValue());
                                 }
-
-                                // Maintain bidirectional mapping
-                                option.getQuestions().add(question);
+                                option.setScore(optionDTO.getScore());
+                              //  option.setQuestion(question); // ✅ Fix: Maintain bidirectional mapping
                                 options.add(option);
                             }
                         }
-                        question.setAnswerOptions(options);
+                        question.setAnswerOptions(new HashSet<>(options));
                         questions.add(question);
                     }
                 }
