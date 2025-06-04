@@ -1,4 +1,4 @@
-package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.service;
+package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.service.service;
 
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.dtos.TestRequestDTO;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.dtos.TestResponseDTO;

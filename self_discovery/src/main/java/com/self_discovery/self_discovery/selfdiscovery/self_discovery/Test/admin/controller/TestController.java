@@ -2,7 +2,7 @@ package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admi
 
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.dtos.TestRequestDTO;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.dtos.TestResponseDTO;
-import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.service.TestService;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.service.service.TestService;
 import com.self_discovery.self_discovery.selfdiscovery.utils.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +21,12 @@ public class TestController {
     private final TestService testService;
 
     // Create Test endpoint
-    @PostMapping("/test/section/question/answeroption")
+    @PostMapping("/section/question/answeroption")
     public ResponseEntity<ApiResponse<TestResponseDTO>> createTest(@Valid @RequestBody TestRequestDTO testRequestDTO) {
         ApiResponse<TestResponseDTO> response = testService.createTest(testRequestDTO);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
-    @GetMapping
+    @GetMapping("/getall")
     public ResponseEntity<ApiResponse<List<TestResponseDTO>>> getAllTests() {
         ApiResponse<List<TestResponseDTO>> response = testService.getAllTests();
         return ResponseEntity.status(response.getStatus()).body(response);
