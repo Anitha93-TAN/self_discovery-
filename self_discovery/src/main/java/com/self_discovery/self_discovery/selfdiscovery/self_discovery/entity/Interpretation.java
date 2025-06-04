@@ -1,5 +1,6 @@
 package com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.self_discovery.self_discovery.selfdiscovery.registration.domain.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ public class Interpretation extends BaseEntity {
     private Long interpretationId;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "test_id", nullable = false)
     private Test test;
 

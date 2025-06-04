@@ -2,6 +2,7 @@ package com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity;
 
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.self_discovery.self_discovery.selfdiscovery.registration.domain.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,7 @@ public class SectionInterpretation extends BaseEntity {
     private Long sectionInterpretationId;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "section_id", nullable = false)
     private Section section;
 

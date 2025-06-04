@@ -3,7 +3,6 @@ package com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.enums.OptionValue;
 import com.self_discovery.self_discovery.selfdiscovery.registration.domain.base.BaseEntity;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,23 +23,18 @@ public class AnswerOption extends BaseEntity {
     @Column(name = "answer_option_id")
     private Long answerOptionId;
 
-    // For custom MCQ text option
-    @Column(name = "answer_text", nullable = true)  // nullable true, since enum or text exclusive
+    @Column(name = "answer_text", nullable = true)
     private String answerText;
 
-    // For enum predefined options (unique)
     @Enumerated(EnumType.STRING)
-    @Column(name = "option_value",unique = true, nullable = true)
+    @Column(name = "option_value", unique = true, nullable = true)
     private OptionValue optionValue;
 
     @Column(name = "score")
     private int score;
 
-    @ManyToMany(mappedBy = "answerOptions", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "answerOptions") // ✅ REMOVED cascade
     @JsonBackReference
     @EqualsAndHashCode.Exclude
     private Set<Question> questions;
-
-
-
 }

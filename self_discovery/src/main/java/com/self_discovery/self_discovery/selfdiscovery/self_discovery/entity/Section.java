@@ -1,5 +1,7 @@
 package com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.self_discovery.self_discovery.selfdiscovery.registration.domain.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,6 +21,7 @@ public class Section extends BaseEntity {
     private Long sectionId;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     @JoinColumn(name = "test_id", nullable = false)
     private Test test;
 
@@ -31,10 +34,12 @@ public class Section extends BaseEntity {
     @Column(name = "randomize_questions", nullable = false)
     private boolean randomizeQuestions = false;
 
-    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Question> questions;
 
-    @OneToMany(mappedBy = "section")
+    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<SectionInterpretation> sectionInterpretations;
 
 }

@@ -82,18 +82,19 @@ public class TestServiceImpl implements TestService {
                         List<AnswerOptionRequestDTO> optionDTOs = questionDTO.getAnswerOptions();
                         List<AnswerOption> options = new ArrayList<>();
 
-                        // Prepare map of existing AnswerOptions for reuse (by OptionValue)
+                        // Prepare a map to hold existing AnswerOptions fetched from DB keyed by OptionValue
                         Map<OptionValue, AnswerOption> existingOptionMap = new HashMap<>();
+
+                        // Bulk fetch existing options from DB if needed
                         if ((questionDTO.getAnswerType() == AnswerType.SINGLE_CHOICE ||
                                 questionDTO.getAnswerType() == AnswerType.RATING) &&
                                 optionDTOs != null && !optionDTOs.isEmpty()) {
 
-                            List<OptionValue> valuesToCheck = new ArrayList<>();
-                            for (AnswerOptionRequestDTO dtoOpt : optionDTOs) {
-                                if (dtoOpt.getOptionValue() != null) {
-                                    valuesToCheck.add(dtoOpt.getOptionValue());
-                                }
-                            }
+                            List<OptionValue> valuesToCheck = optionDTOs.stream()
+                                    .map(AnswerOptionRequestDTO::getOptionValue)
+                                    .filter(Objects::nonNull)
+                                    .distinct()
+                                    .toList();
 
                             if (!valuesToCheck.isEmpty()) {
                                 List<AnswerOption> existingOptions =
@@ -104,27 +105,36 @@ public class TestServiceImpl implements TestService {
                             }
                         }
 
-                        // Process each option
+                        // Process each optionDTO, reuse existing or create new
                         if (optionDTOs != null) {
                             for (AnswerOptionRequestDTO optionDTO : optionDTOs) {
                                 AnswerOption option;
+                                OptionValue optValue = optionDTO.getOptionValue();
 
                                 if ((questionDTO.getAnswerType() == AnswerType.SINGLE_CHOICE ||
                                         questionDTO.getAnswerType() == AnswerType.RATING) &&
-                                        optionDTO.getOptionValue() != null &&
-                                        existingOptionMap.containsKey(optionDTO.getOptionValue())) {
+                                        optValue != null &&
+                                        existingOptionMap.containsKey(optValue)) {
 
                                     // Reuse existing option
-                                    option = existingOptionMap.get(optionDTO.getOptionValue());
+                                    option = existingOptionMap.get(optValue);
                                 } else {
-                                    // Create new option
+                                    // Create new option and save to DB
                                     option = new AnswerOption();
                                     option.setAnswerText(optionDTO.getAnswerText());
                                     option.setScore(optionDTO.getScore());
-                                    option.setOptionValue(optionDTO.getOptionValue());
+                                    option.setOptionValue(optValue);
+
+                                    // Save immediately to persist and get generated ID
+                                    option = answerOptionRepository.save(option);
+
+                                    // Add to map to reuse if encountered again in this request
+                                    if (optValue != null) {
+                                        existingOptionMap.put(optValue, option);
+                                    }
                                 }
 
-                                // *** IMPORTANT: keep bidirectional association in sync ***
+                                // Link question back to option (bidirectional)
                                 if (option.getQuestions() == null) {
                                     option.setQuestions(new HashSet<>());
                                 }
