@@ -2,11 +2,13 @@ package com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.self_discovery.self_discovery.selfdiscovery.registration.domain.base.BaseEntity;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.enums.AnswerType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.Set;
@@ -46,7 +48,10 @@ public class Question extends BaseEntity {
             joinColumns = @JoinColumn(name = "question_id"),
             inverseJoinColumns = @JoinColumn(name = "answer_option_id")
     )
+    @JsonManagedReference
+    @EqualsAndHashCode.Exclude
     private Set<AnswerOption> answerOptions;
+
 
 
 }

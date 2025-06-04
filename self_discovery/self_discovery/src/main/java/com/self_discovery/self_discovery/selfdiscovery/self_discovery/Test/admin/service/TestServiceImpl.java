@@ -1,8 +1,9 @@
 package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.service;
 
-import com.self_discovery.self_discovery.selfdiscovery.self_discovery.ExceptionHandler.CustomException;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.dtos.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.*;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.enums.AnswerType;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.enums.OptionValue;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.repository.AnswerOptionRepository;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.repository.TestRepository;
 import com.self_discovery.self_discovery.selfdiscovery.utils.ApiResponse;
@@ -13,10 +14,8 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -36,7 +35,7 @@ public class TestServiceImpl implements TestService {
     private ResponseHandler<List<TestResponseDTO>> listResponseHandler;
 
     @Override
-    @Transactional //to create tet
+    @Transactional
     public ApiResponse<TestResponseDTO> createTest(TestRequestDTO testRequestDTO) {
         Test testEntity = mapToTestEntity(testRequestDTO);
         Test savedTest = testRepository.save(testEntity);
@@ -45,7 +44,7 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    @Transactional //to get all tests
+    @Transactional
     public ApiResponse<List<TestResponseDTO>> getAllTests() {
         List<Test> tests = testRepository.findAll();
         List<TestResponseDTO> testDTOs = new ArrayList<>();
@@ -54,15 +53,13 @@ public class TestServiceImpl implements TestService {
         }
         return listResponseHandler.success(testDTOs, "All tests fetched successfully", HttpStatusCodes.OK);
     }
-    
- //this method used to convert the DTO to Java object
+
     private Test mapToTestEntity(TestRequestDTO dto) {
         Test test = new Test();
         test.setTitle(dto.getTitle());
         test.setDescription(dto.getDescription());
         test.setLinkExpiryDate(dto.getLinkExpiryDate());
 
- //list of sections
         List<Section> sections = new ArrayList<>();
         if (dto.getSections() != null) {
             for (SectionRequestDTO sectionDTO : dto.getSections()) {
@@ -72,86 +69,134 @@ public class TestServiceImpl implements TestService {
                 section.setRandomizeQuestions(sectionDTO.isRandomizeQuestions());
                 section.setTest(test);
 
- //list of questions
                 List<Question> questions = new ArrayList<>();
                 if (sectionDTO.getQuestions() != null) {
                     for (QuestionRequestDTO questionDTO : sectionDTO.getQuestions()) {
                         Question question = new Question();
                         question.setQuestionText(questionDTO.getQuestionText());
-                        try {
-                            question.setAnswerType(questionDTO.getAnswerType());
-                        } catch (CustomException e) {
-                            throw new CustomException("Invalid AnswerType: " + questionDTO.getAnswerType());
-                        }
+                        question.setAnswerType(questionDTO.getAnswerType());
                         question.setQuestionOrder(questionDTO.getQuestionOrder());
                         question.setSection(section);
 
-//list of anweroption
+                        List<AnswerOptionRequestDTO> optionDTOs = questionDTO.getAnswerOptions();
                         List<AnswerOption> options = new ArrayList<>();
-                        if (questionDTO.getAnswerOptions() != null) {
-                            for (AnswerOptionRequestDTO optionDTO : questionDTO.getAnswerOptions()) {
+
+                        // Prepare map of existing AnswerOptions for reuse (by OptionValue)
+                        Map<OptionValue, AnswerOption> existingOptionMap = new HashMap<>();
+                        if ((questionDTO.getAnswerType() == AnswerType.SINGLE_CHOICE ||
+                                questionDTO.getAnswerType() == AnswerType.RATING) &&
+                                optionDTOs != null && !optionDTOs.isEmpty()) {
+
+                            List<OptionValue> valuesToCheck = new ArrayList<>();
+                            for (AnswerOptionRequestDTO dtoOpt : optionDTOs) {
+                                if (dtoOpt.getOptionValue() != null) {
+                                    valuesToCheck.add(dtoOpt.getOptionValue());
+                                }
+                            }
+
+                            if (!valuesToCheck.isEmpty()) {
+                                List<AnswerOption> existingOptions =
+                                        answerOptionRepository.findByOptionValueIn(valuesToCheck);
+                                for (AnswerOption opt : existingOptions) {
+                                    existingOptionMap.put(opt.getOptionValue(), opt);
+                                }
+                            }
+                        }
+
+                        // Process each option
+                        if (optionDTOs != null) {
+                            for (AnswerOptionRequestDTO optionDTO : optionDTOs) {
                                 AnswerOption option;
 
-                                if (optionDTO.getOptionValue() != null) {
-                                    // Check if an AnswerOption with this OptionValue exists
-                                    Optional<AnswerOption> existingOption =
-                                            answerOptionRepository.findByOptionValue(optionDTO.getOptionValue());
+                                if ((questionDTO.getAnswerType() == AnswerType.SINGLE_CHOICE ||
+                                        questionDTO.getAnswerType() == AnswerType.RATING) &&
+                                        optionDTO.getOptionValue() != null &&
+                                        existingOptionMap.containsKey(optionDTO.getOptionValue())) {
 
-                                    if (existingOption.isPresent()) {
-                                        option = existingOption.get();
-                                    } else {
-                                        // Create new AnswerOption with enum OptionValue
-                                        option = new AnswerOption();
-                                        option.setOptionValue(optionDTO.getOptionValue());
-                                        option.setScore(optionDTO.getScore());
-                                        option.setAnswerText(optionDTO.getAnswerText());
-                                    }
+                                    // Reuse existing option
+                                    option = existingOptionMap.get(optionDTO.getOptionValue());
                                 } else {
-                                    // For custom answerText options without enum value
+                                    // Create new option
                                     option = new AnswerOption();
                                     option.setAnswerText(optionDTO.getAnswerText());
                                     option.setScore(optionDTO.getScore());
+                                    option.setOptionValue(optionDTO.getOptionValue());
                                 }
 
-                                // option.setQuestion(question); // Keep if bidirectional needed
+                                // *** IMPORTANT: keep bidirectional association in sync ***
+                                if (option.getQuestions() == null) {
+                                    option.setQuestions(new HashSet<>());
+                                }
+                                option.getQuestions().add(question);
+
                                 options.add(option);
                             }
                         }
+
                         question.setAnswerOptions(new HashSet<>(options));
                         questions.add(question);
                     }
                 }
+
                 section.setQuestions(questions);
 
-//list of sectionintrepretation
+                // Section interpretations
                 List<SectionInterpretation> sectionInterpretations = new ArrayList<>();
                 if (sectionDTO.getSectionInterpretation() != null) {
                     for (SectionInterpretationRequestDTO interpDTO : sectionDTO.getSectionInterpretation()) {
-                        SectionInterpretation sectionInterpretation = new SectionInterpretation();
-                        sectionInterpretation.setMinScore(interpDTO.getMinScore());
-                        sectionInterpretation.setMaxScore(interpDTO.getMaxScore());
-                        sectionInterpretation.setDescription(interpDTO.getDescription());
-                        sectionInterpretation.setSection(section);
-                        sectionInterpretations.add(sectionInterpretation);
+                        SectionInterpretation interpretation = new SectionInterpretation();
+                        interpretation.setMinScore(interpDTO.getMinScore());
+                        interpretation.setMaxScore(interpDTO.getMaxScore());
+                        interpretation.setDescription(interpDTO.getDescription());
+                        interpretation.setSection(section);
+                        sectionInterpretations.add(interpretation);
                     }
                 }
                 section.setSectionInterpretations(sectionInterpretations);
-
                 sections.add(section);
             }
         }
+
         test.setSections(sections);
+
+        // Test interpretations
+        List<Interpretation> interpretations = new ArrayList<>();
+        if (dto.getInterpretations() != null) {
+            for (InterpretationRequestDTO interpDTO : dto.getInterpretations()) {
+                Interpretation interpretation = new Interpretation();
+                interpretation.setMinScore(interpDTO.getMinScore());
+                interpretation.setMaxScore(interpDTO.getMaxScore());
+                interpretation.setDescription(interpDTO.getDescription());
+                interpretation.setTest(test);
+                interpretations.add(interpretation);
+            }
+        }
+        test.setInterpretations(interpretations);
+
+        // Recommendations
+        List<Recommendation> recommendations = new ArrayList<>();
+        if (dto.getRecommendations() != null) {
+            for (RecommendationRequestDTO recDTO : dto.getRecommendations()) {
+                Recommendation recommendation = new Recommendation();
+                recommendation.setMinScore(recDTO.getMinScore());
+                recommendation.setMaxScore(recDTO.getMaxScore());
+                recommendation.setRecommendationText(recDTO.getRecommendationText());
+                recommendation.setTest(test);
+                recommendations.add(recommendation);
+            }
+        }
+        test.setRecommendations(recommendations);
+
         return test;
     }
 
-//this method used to convert the java object into dto for reponse
     private TestResponseDTO mapToTestResponseDTO(Test entity) {
         TestResponseDTO dto = new TestResponseDTO();
         dto.setTestId(entity.getTestId());
         dto.setTitle(entity.getTitle());
         dto.setDescription(entity.getDescription());
         dto.setLinkExpiryDate(entity.getLinkExpiryDate());
- //section
+
         List<SectionResponseDTO> sectionDTOs = new ArrayList<>();
         if (entity.getSections() != null) {
             for (Section section : entity.getSections()) {
@@ -160,7 +205,7 @@ public class TestServiceImpl implements TestService {
                 sectionDTO.setTitle(section.getTitle());
                 sectionDTO.setSectionOrder(section.getSectionOrder());
                 sectionDTO.setRandomizeQuestions(section.isRandomizeQuestions());
-//question
+
                 List<QuestionResponseDTO> questionDTOs = new ArrayList<>();
                 if (section.getQuestions() != null) {
                     for (Question question : section.getQuestions()) {
@@ -169,7 +214,7 @@ public class TestServiceImpl implements TestService {
                         questionDTO.setQuestionText(question.getQuestionText());
                         questionDTO.setAnswerType(question.getAnswerType());
                         questionDTO.setQuestionOrder(question.getQuestionOrder());
-//answeroption
+
                         List<AnswerOptionResponseDTO> optionDTOs = new ArrayList<>();
                         if (question.getAnswerOptions() != null) {
                             for (AnswerOption option : question.getAnswerOptions()) {
@@ -187,7 +232,6 @@ public class TestServiceImpl implements TestService {
                 }
                 sectionDTO.setQuestions(questionDTOs);
 
-//sectionintrepreation
                 List<SectionInterpretationResponseDTO> sectionInterpDTOs = new ArrayList<>();
                 if (section.getSectionInterpretations() != null) {
                     for (SectionInterpretation si : section.getSectionInterpretations()) {
@@ -201,11 +245,38 @@ public class TestServiceImpl implements TestService {
                     }
                 }
                 sectionDTO.setSectionInterpretationResponseDTOS(sectionInterpDTOs);
-
                 sectionDTOs.add(sectionDTO);
             }
         }
+
         dto.setSections(sectionDTOs);
+
+        List<InterpretationResponseDTO> interpretationDTOs = new ArrayList<>();
+        if (entity.getInterpretations() != null) {
+            for (Interpretation interpretation : entity.getInterpretations()) {
+                InterpretationResponseDTO interpDTO = new InterpretationResponseDTO();
+                interpDTO.setInterpretationId(interpretation.getInterpretationId());
+                interpDTO.setMinScore(interpretation.getMinScore());
+                interpDTO.setMaxScore(interpretation.getMaxScore());
+                interpDTO.setDescription(interpretation.getDescription());
+                interpretationDTOs.add(interpDTO);
+            }
+        }
+        dto.setInterpretations(interpretationDTOs);
+
+        List<RecommendationResponseDTO> recommendationDTOs = new ArrayList<>();
+        if (entity.getRecommendations() != null) {
+            for (Recommendation recommendation : entity.getRecommendations()) {
+                RecommendationResponseDTO recDTO = new RecommendationResponseDTO();
+                recDTO.setRecommendationId(recommendation.getRecommendationId());
+                recDTO.setMinScore(recommendation.getMinScore());
+                recDTO.setMaxScore(recommendation.getMaxScore());
+                recDTO.setRecommendationText(recommendation.getRecommendationText());
+                recommendationDTOs.add(recDTO);
+            }
+        }
+
+        dto.setRecommendations(recommendationDTOs);
         return dto;
     }
 }

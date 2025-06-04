@@ -6,9 +6,9 @@ import com.self_discovery.self_discovery.selfdiscovery.self_discovery.enums.Opti
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.util.List;
 
 @Repository
-public interface AnswerOptionRepository extends JpaRepository<AnswerOption, Integer> {
-    Optional<AnswerOption> findByOptionValue(OptionValue optionValue);
+public interface AnswerOptionRepository extends JpaRepository<AnswerOption, Long> {
+    List<AnswerOption> findByOptionValueIn(List<OptionValue> values);
 }

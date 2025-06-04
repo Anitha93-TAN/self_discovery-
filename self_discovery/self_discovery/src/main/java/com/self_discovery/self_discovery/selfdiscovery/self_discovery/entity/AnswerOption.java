@@ -1,11 +1,13 @@
 package com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.enums.OptionValue;
 import com.self_discovery.self_discovery.selfdiscovery.registration.domain.base.BaseEntity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.Set;
@@ -28,14 +30,17 @@ public class AnswerOption extends BaseEntity {
 
     // For enum predefined options (unique)
     @Enumerated(EnumType.STRING)
-    @Column(name = "option_value", nullable = true)
+    @Column(name = "option_value",unique = true, nullable = true)
     private OptionValue optionValue;
 
     @Column(name = "score")
     private int score;
 
     @ManyToMany(mappedBy = "answerOptions", cascade = CascadeType.ALL)
+    @JsonBackReference
+    @EqualsAndHashCode.Exclude
     private Set<Question> questions;
+
 
 
 }

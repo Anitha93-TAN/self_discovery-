@@ -21,7 +21,7 @@ public class TestController {
     private final TestService testService;
 
     // Create Test endpoint
-    @PostMapping
+    @PostMapping("/test/section/question/answeroption")
     public ResponseEntity<ApiResponse<TestResponseDTO>> createTest(@Valid @RequestBody TestRequestDTO testRequestDTO) {
         ApiResponse<TestResponseDTO> response = testService.createTest(testRequestDTO);
         return ResponseEntity.status(response.getStatus()).body(response);
