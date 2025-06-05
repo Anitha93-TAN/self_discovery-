@@ -109,7 +109,11 @@ public class TestServiceImpl implements TestService {
                         if (optionDTOs != null) {
                             for (AnswerOptionRequestDTO optionDTO : optionDTOs) {
                                 AnswerOption option;
-                                OptionValue optValue = optionDTO.getOptionValue();
+
+                                // Set optionValue to null if MULTI_CHOICE, else use provided value
+                                OptionValue optValue = questionDTO.getAnswerType() == AnswerType.MULTI_CHOICE
+                                        ? null
+                                        : optionDTO.getOptionValue();
 
                                 if ((questionDTO.getAnswerType() == AnswerType.SINGLE_CHOICE ||
                                         questionDTO.getAnswerType() == AnswerType.RATING) &&
@@ -121,7 +125,17 @@ public class TestServiceImpl implements TestService {
                                 } else {
                                     // Create new option and save to DB
                                     option = new AnswerOption();
-                                    option.setAnswerText(optionDTO.getAnswerText());
+
+                                    // *** UPDATED PART ***
+                                    // For SINGLE_CHOICE and RATING: set answerText to null
+                                    if (questionDTO.getAnswerType() == AnswerType.SINGLE_CHOICE ||
+                                            questionDTO.getAnswerType() == AnswerType.RATING) {
+                                        option.setAnswerText(null);
+                                    } else {
+                                        // For MULTI_CHOICE or others, use provided answerText
+                                        option.setAnswerText(optionDTO.getAnswerText());
+                                    }
+
                                     option.setScore(optionDTO.getScore());
                                     option.setOptionValue(optValue);
 
