@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class SectionInterpretationRequestDTO {
+    private String title;
     private int minScore;
     private int maxScore;
     private String description;

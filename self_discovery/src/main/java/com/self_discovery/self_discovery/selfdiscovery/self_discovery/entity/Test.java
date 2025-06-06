@@ -20,7 +20,7 @@ public class Test extends BaseEntity {
     private Long testId;
 
     @Column(name="title",nullable = false, length = 255)
-    private String title;
+    private String testTitle;
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;

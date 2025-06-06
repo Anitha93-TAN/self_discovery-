@@ -21,6 +21,9 @@ public class SectionInterpretation extends BaseEntity {
     @Column(name = "section_interpretation_id")
     private Long sectionInterpretationId;
 
+    @Column(name = "title")
+    private String title;
+
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "section_id", nullable = false)

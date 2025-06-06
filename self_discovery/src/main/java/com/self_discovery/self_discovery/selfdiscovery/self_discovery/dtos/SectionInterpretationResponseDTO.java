@@ -4,8 +4,9 @@ import lombok.Data;
 
 @Data
 public class SectionInterpretationResponseDTO {
+
     private Long sectionInterpretationId;
-    private int sectionId;
+    private String title;
     private int minScore;
     private int maxScore;
     private String description;

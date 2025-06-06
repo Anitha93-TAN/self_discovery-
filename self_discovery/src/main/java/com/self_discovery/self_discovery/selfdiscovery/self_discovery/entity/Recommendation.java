@@ -19,6 +19,9 @@ public class Recommendation extends BaseEntity {
     @Column(name = "recommendation_id")
     private Long recommendationId;
 
+    @Column(name = "title")
+    private String title;
+
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "test_id", nullable = false)

@@ -147,7 +147,7 @@ public class TestServiceImpl implements TestService {
 
     private Test mapToTestEntity(TestRequestDTO dto) {
         Test test = new Test();
-        test.setTitle(dto.getTitle());
+        test.setTestTitle(dto.getTestTitle());
         test.setDescription(dto.getDescription());
         test.setLinkExpiryDate(dto.getLinkExpiryDate());
         return test;
@@ -155,7 +155,7 @@ public class TestServiceImpl implements TestService {
 
     private Section mapToSectionEntity(SectionRequestDTO dto) {
         Section section = new Section();
-        section.setTitle(dto.getTitle());
+        section.setSectionTitle(dto.getSectionTitle());
         section.setSectionOrder(dto.getSectionOrder());
         section.setRandomizeQuestions(dto.isRandomizeQuestions());
         return section;
@@ -171,6 +171,7 @@ public class TestServiceImpl implements TestService {
 
     private SectionInterpretation mapToSectionInterpretationEntity(SectionInterpretationRequestDTO dto) {
         SectionInterpretation si = new SectionInterpretation();
+        si.setTitle(dto.getTitle());
         si.setMinScore(dto.getMinScore());
         si.setMaxScore(dto.getMaxScore());
         si.setDescription(dto.getDescription());
@@ -179,6 +180,7 @@ public class TestServiceImpl implements TestService {
 
     private Interpretation mapToInterpretationEntity(InterpretationRequestDTO dto) {
         Interpretation interpretation = new Interpretation();
+        interpretation.setTitle(dto.getTitle());
         interpretation.setMinScore(dto.getMinScore());
         interpretation.setMaxScore(dto.getMaxScore());
         interpretation.setDescription(dto.getDescription());
@@ -187,6 +189,7 @@ public class TestServiceImpl implements TestService {
 
     private Recommendation mapToRecommendationEntity(RecommendationRequestDTO dto) {
         Recommendation rec = new Recommendation();
+        rec.setTitle(dto.getTitle());
         rec.setMinScore(dto.getMinScore());
         rec.setMaxScore(dto.getMaxScore());
         rec.setRecommendationText(dto.getRecommendationText());
@@ -196,7 +199,7 @@ public class TestServiceImpl implements TestService {
     private TestResponseDTO mapToTestResponseDTO(Test entity) {
         TestResponseDTO dto = new TestResponseDTO();
         dto.setTestId(entity.getTestId());
-        dto.setTitle(entity.getTitle());
+        dto.setTestTitle(entity.getTestTitle());
         dto.setDescription(entity.getDescription());
         dto.setLinkExpiryDate(entity.getLinkExpiryDate());
 
@@ -204,8 +207,7 @@ public class TestServiceImpl implements TestService {
         if (entity.getSections() != null) {
             for (Section section : entity.getSections()) {
                 SectionResponseDTO sectionDTO = new SectionResponseDTO();
-                sectionDTO.setSectionId(section.getSectionId());
-                sectionDTO.setTitle(section.getTitle());
+                sectionDTO.setSectionTitle(section.getSectionTitle());
                 sectionDTO.setSectionOrder(section.getSectionOrder());
                 sectionDTO.setRandomizeQuestions(section.isRandomizeQuestions());
 
@@ -240,7 +242,7 @@ public class TestServiceImpl implements TestService {
                     for (SectionInterpretation si : section.getSectionInterpretations()) {
                         SectionInterpretationResponseDTO siDTO = new SectionInterpretationResponseDTO();
                         siDTO.setSectionInterpretationId(si.getSectionInterpretationId());
-                        siDTO.setSectionId(Math.toIntExact(si.getSection().getSectionId()));
+                        siDTO.setTitle(si.getTitle());
                         siDTO.setMinScore(si.getMinScore());
                         siDTO.setMaxScore(si.getMaxScore());
                         siDTO.setDescription(si.getDescription());
@@ -258,6 +260,7 @@ public class TestServiceImpl implements TestService {
             for (Interpretation interpretation : entity.getInterpretations()) {
                 InterpretationResponseDTO interpDTO = new InterpretationResponseDTO();
                 interpDTO.setInterpretationId(interpretation.getInterpretationId());
+                interpDTO.setTitle(interpretation.getTitle());
                 interpDTO.setMinScore(interpretation.getMinScore());
                 interpDTO.setMaxScore(interpretation.getMaxScore());
                 interpDTO.setDescription(interpretation.getDescription());
@@ -270,6 +273,7 @@ public class TestServiceImpl implements TestService {
         if (entity.getRecommendations() != null) {
             for (Recommendation recommendation : entity.getRecommendations()) {
                 RecommendationResponseDTO recDTO = new RecommendationResponseDTO();
+                recDTO.setTitle(recommendation.getTitle());
                 recDTO.setRecommendationId(recommendation.getRecommendationId());
                 recDTO.setMinScore(recommendation.getMinScore());
                 recDTO.setMaxScore(recommendation.getMaxScore());

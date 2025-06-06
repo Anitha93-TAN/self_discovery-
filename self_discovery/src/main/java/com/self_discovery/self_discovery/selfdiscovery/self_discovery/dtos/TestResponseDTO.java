@@ -7,10 +7,11 @@ import java.util.List;
 @Data
 public class TestResponseDTO {
     private Long testId;
-    private String title;
+    private String testTitle;
     private String description;
     private LocalDate linkExpiryDate;
+    private List<SectionResponseDTO> sections;
     private List<InterpretationResponseDTO> interpretations;
     private List<RecommendationResponseDTO> recommendations;
-    private List<SectionResponseDTO> sections;
+
 }

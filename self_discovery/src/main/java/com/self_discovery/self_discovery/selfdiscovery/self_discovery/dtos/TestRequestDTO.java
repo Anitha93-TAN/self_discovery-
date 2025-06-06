@@ -6,10 +6,11 @@ import java.util.List;
 
 @Data
 public class TestRequestDTO {
-    private String title;
+    private String testTitle;
     private String description;
     private LocalDate linkExpiryDate;
+    private List<SectionRequestDTO> sections;
     private List<InterpretationRequestDTO> interpretations;
     private List<RecommendationRequestDTO> recommendations;
-    private List<SectionRequestDTO> sections;
+
 }

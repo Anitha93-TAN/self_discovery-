@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -25,8 +26,8 @@ public class Section extends BaseEntity {
     @JoinColumn(name = "test_id", nullable = false)
     private Test test;
 
-    @Column(name = "title", nullable = false)
-    private String title;
+    @Column(name = "section_title", nullable = false)
+    private String sectionTitle;
 
     @Column(name = "section_order", nullable = false)
     private int sectionOrder;

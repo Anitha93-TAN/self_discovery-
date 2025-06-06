@@ -19,6 +19,9 @@ public class Interpretation extends BaseEntity {
     @Column(name = "interpretation_id")
     private Long interpretationId;
 
+    @Column(name = "title")
+    private String title;
+
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "test_id", nullable = false)
