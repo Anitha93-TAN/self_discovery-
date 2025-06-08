@@ -3,7 +3,6 @@ package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admi
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.dtos.TestRequestDTO;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.dtos.TestResponseDTO;
 import com.self_discovery.self_discovery.selfdiscovery.utils.ApiResponse;
-
 import java.util.List;
 
 public interface TestService {

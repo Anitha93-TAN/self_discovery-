@@ -58,43 +58,44 @@ public class TestServiceImpl implements TestService {
                         question.setSection(section);
 
                         List<AnswerOption> options = new ArrayList<>();
+
                         if (questionDTO.getAnswerOptions() != null) {
                             for (AnswerOptionRequestDTO optionDTO : questionDTO.getAnswerOptions()) {
                                 OptionValue finalOptionValue;
                                 String finalAnswerText;
 
                                 if (questionDTO.getAnswerType() == AnswerType.MULTI_CHOICE) {
-                                    finalOptionValue = OptionValue.DEFAULT_ANSWER; // use default enum for multi-choice
+                                    finalOptionValue = OptionValue.DEFAULT_ANSWER; // multi-choice க்கான fixed enum
                                     finalAnswerText = optionDTO.getAnswerText();  // user input text
                                 } else {
                                     finalOptionValue = optionDTO.getOptionValue(); // enum from DTO
-                                    finalAnswerText = OptionValue.CUSTOM_ANSWER.name(); // static string
+                                    finalAnswerText = OptionValue.CUSTOM_ANSWER.name(); // fixed string
                                 }
 
-                                String key = finalOptionValue.name() + "::" + finalAnswerText;
+                                Optional<AnswerOption> existingOption = answerOptionRepository
+                                        .findByOptionValueAndAnswerText(finalOptionValue, finalAnswerText);
 
-                                AnswerOption option = optionCache.get(key);
-                                if (option == null) {
-                                    Optional<AnswerOption> existingOption = answerOptionRepository.findByOptionValueAndAnswerText(finalOptionValue, finalAnswerText);
-                                    if (existingOption.isPresent()) {
-                                        option = existingOption.get();
-                                    } else {
-                                        option = new AnswerOption();
-                                        option.setOptionValue(finalOptionValue);
-                                        option.setAnswerText(finalAnswerText);
-                                        option.setScore(optionDTO.getScore());
-                                        option = answerOptionRepository.save(option);
-                                    }
-                                    optionCache.put(key, option);
+                                AnswerOption option;
+
+                                if (existingOption.isPresent()) {
+                                    option = existingOption.get();
+                                } else {
+                                    option = new AnswerOption();
+                                    option.setOptionValue(finalOptionValue);
+                                    option.setAnswerText(finalAnswerText);
+                                    option.setScore(optionDTO.getScore());
+                                    option = answerOptionRepository.save(option);
                                 }
+
                                 options.add(option);
                             }
                         }
+
                         question.setAnswerOptions(new HashSet<>(options));
                         questions.add(question);
+                        section.setQuestions(questions);
                     }
-                    section.setQuestions(questions);
-                }
+                    }
 
                 if (sectionDTO.getSectionInterpretation() != null) {
                     List<SectionInterpretation> interpretations = sectionDTO.getSectionInterpretation().stream()
@@ -203,86 +204,101 @@ public class TestServiceImpl implements TestService {
         dto.setDescription(entity.getDescription());
         dto.setLinkExpiryDate(entity.getLinkExpiryDate());
 
-        List<SectionResponseDTO> sectionDTOs = new ArrayList<>();
         if (entity.getSections() != null) {
-            for (Section section : entity.getSections()) {
-                SectionResponseDTO sectionDTO = new SectionResponseDTO();
-                sectionDTO.setSectionTitle(section.getSectionTitle());
-                sectionDTO.setSectionOrder(section.getSectionOrder());
-                sectionDTO.setRandomizeQuestions(section.isRandomizeQuestions());
-
-                List<QuestionResponseDTO> questionDTOs = new ArrayList<>();
-                if (section.getQuestions() != null) {
-                    for (Question question : section.getQuestions()) {
-                        QuestionResponseDTO questionDTO = new QuestionResponseDTO();
-                        questionDTO.setQuestionId(question.getQuestionId());
-                        questionDTO.setQuestionText(question.getQuestionText());
-                        questionDTO.setAnswerType(question.getAnswerType());
-                        questionDTO.setQuestionOrder(question.getQuestionOrder());
-
-                        List<AnswerOptionResponseDTO> optionDTOs = new ArrayList<>();
-                        if (question.getAnswerOptions() != null) {
-                            for (AnswerOption option : question.getAnswerOptions()) {
-                                AnswerOptionResponseDTO optionDTO = new AnswerOptionResponseDTO();
-                                optionDTO.setAnswerOptionId(option.getAnswerOptionId());
-                                optionDTO.setAnswerText(option.getAnswerText());
-                                optionDTO.setOptionValue(option.getOptionValue());
-                                optionDTO.setScore(option.getScore());
-                                optionDTOs.add(optionDTO);
-                            }
-                        }
-                        questionDTO.setAnswerOptions(optionDTOs);
-                        questionDTOs.add(questionDTO);
-                    }
-                }
-                sectionDTO.setQuestions(questionDTOs);
-
-                List<SectionInterpretationResponseDTO> sectionInterpDTOs = new ArrayList<>();
-                if (section.getSectionInterpretations() != null) {
-                    for (SectionInterpretation si : section.getSectionInterpretations()) {
-                        SectionInterpretationResponseDTO siDTO = new SectionInterpretationResponseDTO();
-                        siDTO.setSectionInterpretationId(si.getSectionInterpretationId());
-                        siDTO.setTitle(si.getTitle());
-                        siDTO.setMinScore(si.getMinScore());
-                        siDTO.setMaxScore(si.getMaxScore());
-                        siDTO.setDescription(si.getDescription());
-                        sectionInterpDTOs.add(siDTO);
-                    }
-                }
-                sectionDTO.setSectionInterpretationResponse(sectionInterpDTOs);
-                sectionDTOs.add(sectionDTO);
-            }
+            dto.setSections(entity.getSections().stream()
+                    .map(this::mapToSectionResponseDTO)
+                    .collect(Collectors.toList()));
         }
-        dto.setSections(sectionDTOs);
 
-        List<InterpretationResponseDTO> interpretationDTOs = new ArrayList<>();
         if (entity.getInterpretations() != null) {
-            for (Interpretation interpretation : entity.getInterpretations()) {
-                InterpretationResponseDTO interpDTO = new InterpretationResponseDTO();
-                interpDTO.setInterpretationId(interpretation.getInterpretationId());
-                interpDTO.setTitle(interpretation.getTitle());
-                interpDTO.setMinScore(interpretation.getMinScore());
-                interpDTO.setMaxScore(interpretation.getMaxScore());
-                interpDTO.setDescription(interpretation.getDescription());
-                interpretationDTOs.add(interpDTO);
-            }
+            dto.setInterpretations(entity.getInterpretations().stream()
+                    .map(this::mapToInterpretationResponseDTO)
+                    .collect(Collectors.toList()));
         }
-        dto.setInterpretations(interpretationDTOs);
 
-        List<RecommendationResponseDTO> recommendationDTOs = new ArrayList<>();
         if (entity.getRecommendations() != null) {
-            for (Recommendation recommendation : entity.getRecommendations()) {
-                RecommendationResponseDTO recDTO = new RecommendationResponseDTO();
-                recDTO.setTitle(recommendation.getTitle());
-                recDTO.setRecommendationId(recommendation.getRecommendationId());
-                recDTO.setMinScore(recommendation.getMinScore());
-                recDTO.setMaxScore(recommendation.getMaxScore());
-                recDTO.setRecommendationText(recommendation.getRecommendationText());
-                recommendationDTOs.add(recDTO);
-            }
+            dto.setRecommendations(entity.getRecommendations().stream()
+                    .map(this::mapToRecommendationResponseDTO)
+                    .collect(Collectors.toList()));
         }
-        dto.setRecommendations(recommendationDTOs);
 
         return dto;
     }
+
+    private SectionResponseDTO mapToSectionResponseDTO(Section section) {
+        SectionResponseDTO dto = new SectionResponseDTO();
+        dto.setSectionTitle(section.getSectionTitle());
+        dto.setSectionOrder(section.getSectionOrder());
+        dto.setRandomizeQuestions(section.isRandomizeQuestions());
+
+        if (section.getQuestions() != null) {
+            dto.setQuestions(section.getQuestions().stream()
+                    .map(this::mapToQuestionResponseDTO)
+                    .collect(Collectors.toList()));
+        }
+
+        if (section.getSectionInterpretations() != null) {
+            dto.setSectionInterpretationResponse(section.getSectionInterpretations().stream()
+                    .map(this::mapToSectionInterpretationResponseDTO)
+                    .collect(Collectors.toList()));
+        }
+
+        return dto;
+    }
+
+    private QuestionResponseDTO mapToQuestionResponseDTO(Question question) {
+        QuestionResponseDTO dto = new QuestionResponseDTO();
+        dto.setQuestionId(question.getQuestionId());
+        dto.setQuestionText(question.getQuestionText());
+        dto.setAnswerType(question.getAnswerType());
+        dto.setQuestionOrder(question.getQuestionOrder());
+
+        if (question.getAnswerOptions() != null) {
+            dto.setAnswerOptions(question.getAnswerOptions().stream()
+                    .map(this::mapToAnswerOptionResponseDTO)
+                    .collect(Collectors.toList()));
+        }
+
+        return dto;
+    }
+
+    private AnswerOptionResponseDTO mapToAnswerOptionResponseDTO(AnswerOption option) {
+        AnswerOptionResponseDTO dto = new AnswerOptionResponseDTO();
+        dto.setAnswerOptionId(option.getAnswerOptionId());
+        dto.setAnswerText(option.getAnswerText());
+        dto.setOptionValue(option.getOptionValue());
+        dto.setScore(option.getScore());
+        return dto;
+    }
+
+    private SectionInterpretationResponseDTO mapToSectionInterpretationResponseDTO(SectionInterpretation si) {
+        SectionInterpretationResponseDTO dto = new SectionInterpretationResponseDTO();
+        dto.setSectionInterpretationId(si.getSectionInterpretationId());
+        dto.setTitle(si.getTitle());
+        dto.setMinScore(si.getMinScore());
+        dto.setMaxScore(si.getMaxScore());
+        dto.setDescription(si.getDescription());
+        return dto;
+    }
+
+    private InterpretationResponseDTO mapToInterpretationResponseDTO(Interpretation interpretation) {
+        InterpretationResponseDTO dto = new InterpretationResponseDTO();
+        dto.setInterpretationId(interpretation.getInterpretationId());
+        dto.setTitle(interpretation.getTitle());
+        dto.setMinScore(interpretation.getMinScore());
+        dto.setMaxScore(interpretation.getMaxScore());
+        dto.setDescription(interpretation.getDescription());
+        return dto;
+    }
+
+    private RecommendationResponseDTO mapToRecommendationResponseDTO(Recommendation recommendation) {
+        RecommendationResponseDTO dto = new RecommendationResponseDTO();
+        dto.setRecommendationId(recommendation.getRecommendationId());
+        dto.setTitle(recommendation.getTitle());
+        dto.setMinScore(recommendation.getMinScore());
+        dto.setMaxScore(recommendation.getMaxScore());
+        dto.setRecommendationText(recommendation.getRecommendationText());
+        return dto;
+    }
+
 }

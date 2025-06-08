@@ -7,7 +7,9 @@ import com.self_discovery.self_discovery.selfdiscovery.utils.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,10 +17,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/tests")
-@RequiredArgsConstructor
+
 public class TestController {
 
-    private final TestService testService;
+    @Autowired
+    private TestService testService;
 
     @Operation(summary = "Create a test with sections, questions, and answer options")
     @PostMapping("/section/question/answeroption")
