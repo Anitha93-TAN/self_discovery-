@@ -17,7 +17,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/tests")
-
 public class TestController {
 
     @Autowired

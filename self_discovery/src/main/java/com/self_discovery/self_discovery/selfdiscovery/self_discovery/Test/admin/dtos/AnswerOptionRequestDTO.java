@@ -1,10 +1,7 @@
-package com.self_discovery.self_discovery.selfdiscovery.self_discovery.dtos;
+package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.dtos;
 
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.enums.OptionValue;
 import lombok.Data;
-
-import java.util.List;
-import java.util.Set;
 
 @Data
 public class AnswerOptionRequestDTO {

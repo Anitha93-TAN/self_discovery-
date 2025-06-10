@@ -11,9 +11,5 @@ import java.util.Optional;
 @Repository
 public interface AnswerOptionRepository extends JpaRepository<AnswerOption, Long> {
 
-    // To fetch all options matching the provided combination of optionValue and answerText
-    List<AnswerOption> findByOptionValueIn(List<OptionValue> optionValues);
-
-    // To check for duplicates based on both enum and answerText (especially important for CUSTOM)
-    Optional<AnswerOption> findByOptionValueAndAnswerText(OptionValue optionValue, String answerText);
+    Optional<AnswerOption> findByOptionValue(OptionValue optionValue);
 }

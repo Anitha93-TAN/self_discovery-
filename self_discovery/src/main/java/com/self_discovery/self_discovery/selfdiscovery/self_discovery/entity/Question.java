@@ -28,7 +28,6 @@ public class Question extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "section_id", nullable = false)
-    @JsonBackReference
     private Section section;
 
     @Column(name = "question_text", nullable = false, columnDefinition = "TEXT")
@@ -48,7 +47,6 @@ public class Question extends BaseEntity {
             joinColumns = @JoinColumn(name = "question_id"),
             inverseJoinColumns = @JoinColumn(name = "answer_option_id")
     )
-    @JsonManagedReference
     @EqualsAndHashCode.Exclude
     private Set<AnswerOption> answerOptions;
 

@@ -39,13 +39,10 @@ public class TestServiceImpl implements TestService {
     @Override
     @Transactional
     public ApiResponse<TestResponseDTO> createTest(TestRequestDTO testRequestDTO) {
-        // Create Test entity (basic fields)
         Test test = mapToTestEntity(testRequestDTO);
 
-        // Map sections, questions, options with caching and DB lookup for options
         if (testRequestDTO.getSections() != null) {
             List<Section> sections = new ArrayList<>();
-            Map<String, AnswerOption> optionCache = new HashMap<>();
 
             for (SectionRequestDTO sectionDTO : testRequestDTO.getSections()) {
                 Section section = mapToSectionEntity(sectionDTO);
@@ -58,45 +55,60 @@ public class TestServiceImpl implements TestService {
                         question.setSection(section);
 
                         List<AnswerOption> options = new ArrayList<>();
-
-                        if (questionDTO.getAnswerOptions() != null) {
+                        if (questionDTO.getAnswerType() == AnswerType.MULTI_CHOICE) {
                             for (AnswerOptionRequestDTO optionDTO : questionDTO.getAnswerOptions()) {
-                                OptionValue finalOptionValue;
-                                String finalAnswerText;
+                                AnswerOption customOption = new AnswerOption();
+                                customOption.setOptionValue(OptionValue.CUSTOM);
+                                customOption.setAnswerText(optionDTO.getAnswerText());
+                                customOption.setScore(optionDTO.getScore());
+                                options.add(answerOptionRepository.save(customOption));
+                            }
+                            question.setAnswerOptions(new HashSet<>(options));
 
-                                if (questionDTO.getAnswerType() == AnswerType.MULTI_CHOICE) {
-                                    finalOptionValue = OptionValue.DEFAULT_ANSWER; // multi-choice க்கான fixed enum
-                                    finalAnswerText = optionDTO.getAnswerText();  // user input text
-                                } else {
-                                    finalOptionValue = optionDTO.getOptionValue(); // enum from DTO
-                                    finalAnswerText = OptionValue.CUSTOM_ANSWER.name(); // fixed string
+                        } else if (questionDTO.getAnswerType() == AnswerType.SINGLE_CHOICE) {
+                            List<OptionValue> receivedValues = questionDTO.getAnswerOptions().stream()
+                                    .map(AnswerOptionRequestDTO::getOptionValue)
+                                    .collect(Collectors.toList());
+
+                            List<OptionValue> expectedValues = Arrays.asList(OptionValue.YES, OptionValue.NO);
+
+                            if (!(receivedValues.containsAll(expectedValues) && expectedValues.containsAll(receivedValues))) {
+                                throw new IllegalArgumentException("SINGLE_CHOICE must contain only YES and NO options.");
+                            }
+
+                            AnswerOption yesOption = answerOptionRepository.findByOptionValue(OptionValue.YES)
+                                    .orElseThrow(() -> new IllegalArgumentException("YES option not found in DB"));
+                            AnswerOption noOption = answerOptionRepository.findByOptionValue(OptionValue.NO)
+                                    .orElseThrow(() -> new IllegalArgumentException("NO option not found in DB"));
+
+                            options = Arrays.asList(yesOption, noOption);
+                            question.setAnswerOptions(new HashSet<>(options));
+
+                        } else if (questionDTO.getAnswerType() == AnswerType.RATING) {
+                            List<OptionValue> validRatingValues = Arrays.asList(
+                                    OptionValue.ONE, OptionValue.TWO, OptionValue.THREE, OptionValue.FOUR, OptionValue.FIVE,
+                                    OptionValue.SIX, OptionValue.SEVEN, OptionValue.EIGHT, OptionValue.NINE, OptionValue.TEN
+                            );
+
+                            for (AnswerOptionRequestDTO optionDTO : questionDTO.getAnswerOptions()) {
+                                OptionValue optionValue = optionDTO.getOptionValue();
+
+                                if (!validRatingValues.contains(optionValue)) {
+                                    throw new IllegalArgumentException("Invalid RATING option: " + optionValue);
                                 }
 
-                                Optional<AnswerOption> existingOption = answerOptionRepository
-                                        .findByOptionValueAndAnswerText(finalOptionValue, finalAnswerText);
-
-                                AnswerOption option;
-
-                                if (existingOption.isPresent()) {
-                                    option = existingOption.get();
-                                } else {
-                                    option = new AnswerOption();
-                                    option.setOptionValue(finalOptionValue);
-                                    option.setAnswerText(finalAnswerText);
-                                    option.setScore(optionDTO.getScore());
-                                    option = answerOptionRepository.save(option);
-                                }
-
+                                AnswerOption option = answerOptionRepository.findByOptionValue(optionValue)
+                                        .orElseThrow(() -> new IllegalArgumentException("RATING option not found in DB: " + optionValue));
                                 options.add(option);
                             }
+
+                            question.setAnswerOptions(new HashSet<>(options));
                         }
 
-                        question.setAnswerOptions(new HashSet<>(options));
                         questions.add(question);
-                        section.setQuestions(questions);
                     }
-                    }
-
+                    section.setQuestions(questions);
+                }
                 if (sectionDTO.getSectionInterpretation() != null) {
                     List<SectionInterpretation> interpretations = sectionDTO.getSectionInterpretation().stream()
                             .map(this::mapToSectionInterpretationEntity)
@@ -107,6 +119,7 @@ public class TestServiceImpl implements TestService {
 
                 sections.add(section);
             }
+
             test.setSections(sections);
         }
 
@@ -126,10 +139,7 @@ public class TestServiceImpl implements TestService {
             test.setRecommendations(recommendations);
         }
 
-        // Save the entire test with all nested entities
         Test savedTest = testRepository.save(test);
-
-        // Map saved entity to response DTO
         TestResponseDTO responseDTO = mapToTestResponseDTO(savedTest);
         return responseHandler.success(responseDTO, "Test created successfully", HttpStatusCodes.OK);
     }
@@ -143,8 +153,6 @@ public class TestServiceImpl implements TestService {
                 .collect(Collectors.toList());
         return listResponseHandler.success(testDTOs, "All tests fetched successfully", HttpStatusCodes.OK);
     }
-
-    // Pure mapping methods below (no repo calls or side effects)
 
     private Test mapToTestEntity(TestRequestDTO dto) {
         Test test = new Test();
@@ -300,5 +308,4 @@ public class TestServiceImpl implements TestService {
         dto.setRecommendationText(recommendation.getRecommendationText());
         return dto;
     }
-
 }

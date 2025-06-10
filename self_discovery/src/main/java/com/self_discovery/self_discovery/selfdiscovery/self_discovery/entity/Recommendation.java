@@ -23,7 +23,6 @@ public class Recommendation extends BaseEntity {
     private String title;
 
     @ManyToOne
-    @JsonBackReference
     @JoinColumn(name = "test_id", nullable = false)
     private Test test;
 

@@ -15,10 +15,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(
-        name = "answer_option",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"option_value", "answer_text"})
-)
 public class AnswerOption extends BaseEntity {
 
     @Id
