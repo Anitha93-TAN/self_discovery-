@@ -1,6 +1,6 @@
 package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.section.controller;
 
-import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.section.service.ISectionService;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.section.service.interfaces.ISectionService;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.section.dtos.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

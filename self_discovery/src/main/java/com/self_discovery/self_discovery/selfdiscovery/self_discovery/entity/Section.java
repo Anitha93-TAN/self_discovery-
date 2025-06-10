@@ -38,6 +38,7 @@ public class Section extends BaseEntity {
     private List<Question> questions;
 
     @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<SectionInterpretation> sectionInterpretations;
 
 }

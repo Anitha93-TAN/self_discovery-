@@ -1,9 +1,10 @@
 package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.service.interfaces;
 
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.dtos.TestRequestDTO;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.dtos.TestResponseDTO;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.dtos.TestUpdateRequestDTO;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.dtos.TestUpdateResponseDTO;
-import com.self_discovery.self_discovery.selfdiscovery.self_discovery.dtos.TestRequestDTO;
-import com.self_discovery.self_discovery.selfdiscovery.self_discovery.dtos.TestResponseDTO;
+
 import com.self_discovery.self_discovery.selfdiscovery.utils.ApiResponse;
 import java.util.List;
 

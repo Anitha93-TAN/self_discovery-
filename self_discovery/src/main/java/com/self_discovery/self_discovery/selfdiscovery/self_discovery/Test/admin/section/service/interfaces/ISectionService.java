@@ -1,4 +1,4 @@
-package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.section.service;
+package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.section.service.interfaces;
 
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.section.dtos.*;
 import java.util.List;

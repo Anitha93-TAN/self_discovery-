@@ -7,7 +7,6 @@ import lombok.Data;
 public class SectionInterpretationUpdateResponseDTO {
     private Long sectionInterpretationId;
     private String title;
-    private Section section;
     private int minScore;
     private int maxScore;
     private String description;

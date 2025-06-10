@@ -1,9 +1,7 @@
 package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.service.implementation;
 
-import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.dtos.TestUpdateRequestDTO;
-import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.dtos.TestUpdateResponseDTO;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.dtos.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.service.interfaces.TestService;
-import com.self_discovery.self_discovery.selfdiscovery.self_discovery.dtos.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.enums.AnswerType;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.enums.OptionValue;
@@ -71,7 +69,7 @@ public class TestServiceImpl implements TestService {
                                 customOption.setScore(optionDTO.getScore());
                                 options.add(answerOptionRepository.save(customOption));
                             }
-                            question.setAnswerOptions(new HashSet<>(options));
+                            question.setAnswerOptions(new ArrayList<>(options));
 
                         } else if (questionDTO.getAnswerType() == AnswerType.SINGLE_CHOICE) {
                             List<OptionValue> receivedValues = questionDTO.getAnswerOptions().stream()
@@ -90,7 +88,7 @@ public class TestServiceImpl implements TestService {
                                     .orElseThrow(() -> new IllegalArgumentException("NO option not found in DB"));
 
                             options = Arrays.asList(yesOption, noOption);
-                            question.setAnswerOptions(new HashSet<>(options));
+                            question.setAnswerOptions(new ArrayList<>(options));
 
                         } else if (questionDTO.getAnswerType() == AnswerType.RATING) {
                             List<OptionValue> validRatingValues = Arrays.asList(
@@ -110,7 +108,7 @@ public class TestServiceImpl implements TestService {
                                 options.add(option);
                             }
 
-                            question.setAnswerOptions(new HashSet<>(options));
+                            question.setAnswerOptions(new ArrayList<>(options));
                         }
 
                         questions.add(question);

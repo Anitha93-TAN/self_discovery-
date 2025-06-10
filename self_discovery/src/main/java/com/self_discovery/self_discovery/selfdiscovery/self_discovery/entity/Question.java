@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -48,7 +49,7 @@ public class Question extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "answer_option_id")
     )
     @EqualsAndHashCode.Exclude
-    private Set<AnswerOption> answerOptions;
+    private List<AnswerOption> answerOptions;
 
 
 

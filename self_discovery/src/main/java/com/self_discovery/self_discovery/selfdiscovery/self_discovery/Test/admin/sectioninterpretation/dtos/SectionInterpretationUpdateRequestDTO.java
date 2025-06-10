@@ -9,7 +9,6 @@ public class SectionInterpretationUpdateRequestDTO {
 
     private Long sectionInterpretationId;
     private String title;
-    private Section section;
     private int minScore;
     private int maxScore;
     private String description;

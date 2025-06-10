@@ -1,7 +1,8 @@
-package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.section.service;
+package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.section.service.implementation;
 
 import com.self_discovery.self_discovery.selfdiscovery.repository.SectionRepository;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.section.dtos.*;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.section.service.interfaces.ISectionService;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.Section;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

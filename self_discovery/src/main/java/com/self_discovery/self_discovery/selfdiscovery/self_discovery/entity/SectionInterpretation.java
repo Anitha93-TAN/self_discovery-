@@ -26,6 +26,7 @@ public class SectionInterpretation extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "section_id", nullable = false)
+    @JsonBackReference
     private Section section;
 
     @Column(name = "min_score", nullable = false)
