@@ -1,6 +1,8 @@
-package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.service.implementation;
+package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.service.implementation;
 
-import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.service.service.TestService;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.dtos.TestUpdateRequestDTO;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.dtos.TestUpdateResponseDTO;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.service.interfaces.TestService;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.dtos.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.enums.AnswerType;
@@ -35,6 +37,12 @@ public class TestServiceImpl implements TestService {
 
     @Autowired
     private ResponseHandler<List<TestResponseDTO>> listResponseHandler;
+
+    @Autowired
+    private ResponseHandler  <TestUpdateResponseDTO> listResponseUpdateHandler;
+
+    @Autowired
+    private ResponseHandler<Void> voidResponseHandler;
 
     @Override
     @Transactional
@@ -153,6 +161,46 @@ public class TestServiceImpl implements TestService {
                 .collect(Collectors.toList());
         return listResponseHandler.success(testDTOs, "All tests fetched successfully", HttpStatusCodes.OK);
     }
+    @Override
+    @Transactional
+    public ApiResponse<TestResponseDTO> getTestById(Long testId) {
+        Test test = testRepository.findById(testId)
+                .orElseThrow(() -> new NoSuchElementException("Test not found with ID: " + testId));
+        return responseHandler.success(mapToTestResponseDTO(test), "Test fetched successfully", HttpStatusCodes.OK);
+    }
+
+    @Override
+    @Transactional
+    public ApiResponse<Void> deleteTestById(Long testId) {
+        if (!testRepository.existsById(testId)) {
+            throw new NoSuchElementException("Test not found with ID: " + testId);
+        }
+        testRepository.deleteById(testId);
+        return voidResponseHandler.success(null, "Test deleted successfully", HttpStatusCodes.OK);
+    }
+
+    @Override
+    @Transactional
+    public ApiResponse<Void> deleteAllTests() {
+        testRepository.deleteAll();
+        return voidResponseHandler.success(null, "All tests deleted successfully", HttpStatusCodes.OK);
+    }
+
+    @Override
+    @Transactional
+    public ApiResponse<TestUpdateResponseDTO> updateTest(Long testId, TestUpdateRequestDTO updateDTO) {
+        Test test = testRepository.findById(testId)
+                .orElseThrow(() -> new NoSuchElementException("Test not found with ID: " + testId));
+
+        test.setTestTitle(updateDTO.getTestTitle());
+        test.setDescription(updateDTO.getDescription());
+        test.setLinkExpiryDate(updateDTO.getLinkExpiryDate());
+
+        Test saved = testRepository.save(test);
+        return listResponseUpdateHandler.success(mapToTestUpdateResponseDTO(saved), "Test updated successfully", HttpStatusCodes.OK);
+    }
+
+
 
     private Test mapToTestEntity(TestRequestDTO dto) {
         Test test = new Test();
@@ -177,6 +225,15 @@ public class TestServiceImpl implements TestService {
         question.setQuestionOrder(dto.getQuestionOrder());
         return question;
     }
+    private TestUpdateResponseDTO mapToTestUpdateResponseDTO(Test test) {
+        TestUpdateResponseDTO dto = new TestUpdateResponseDTO();
+        dto.setTestId(test.getTestId());
+        dto.setTestTitle(test.getTestTitle());
+        dto.setDescription(test.getDescription());
+        dto.setLinkExpiryDate(test.getLinkExpiryDate());
+        return dto;
+    }
+
 
     private SectionInterpretation mapToSectionInterpretationEntity(SectionInterpretationRequestDTO dto) {
         SectionInterpretation si = new SectionInterpretation();

@@ -1,4 +1,4 @@
-package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.dtos;
+package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.dtos;
 
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.enums.OptionValue;
 import lombok.Data;

@@ -11,5 +11,6 @@ import java.util.Optional;
 @Repository
 public interface AnswerOptionRepository extends JpaRepository<AnswerOption, Long> {
 
+
     Optional<AnswerOption> findByOptionValue(OptionValue optionValue);
 }

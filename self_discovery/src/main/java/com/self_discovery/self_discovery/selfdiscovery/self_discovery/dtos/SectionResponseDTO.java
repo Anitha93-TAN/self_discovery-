@@ -5,6 +5,7 @@ import java.util.List;
 
 @Data
 public class SectionResponseDTO {
+    private Long sectionId;
     private String sectionTitle;
     private int sectionOrder;
     private boolean randomizeQuestions;
