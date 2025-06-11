@@ -1,5 +1,6 @@
 package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.questions.service.implementations;
 
+import com.self_discovery.self_discovery.selfdiscovery.ExceptionHandler.NotFoundException;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.questions.dtos.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.questions.service.interfaces.IQuestionService;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.AnswerOption;
@@ -49,7 +50,7 @@ public class QuestionServiceImpl implements IQuestionService {
     @Transactional
     public ApiResponse<QuestionUpdateResponseDTO> update(Long id, QuestionUpdateRequestDTO dto) {
         Question question = questionRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Question not found with ID: " + id));
+                .orElseThrow(() -> new NotFoundException("Question not found with ID: " + id));
 
         question.setQuestionText(dto.getQuestionText());
         question.setAnswerType(dto.getAnswerType());
@@ -57,7 +58,7 @@ public class QuestionServiceImpl implements IQuestionService {
 
         List<AnswerOption> answerOptions = dto.getAnswerOptions().stream()
                 .map(opt -> answerOptionRepository.findById(opt.getAnswerOptionId())
-                        .orElseThrow(() -> new NoSuchElementException("AnswerOption not found with ID: " + opt.getAnswerOptionId())))
+                        .orElseThrow(() -> new NotFoundException("AnswerOption not found with ID: " + opt.getAnswerOptionId())))
                 .collect(Collectors.toList());
 
         question.setAnswerOptions(answerOptions);
@@ -76,7 +77,7 @@ public class QuestionServiceImpl implements IQuestionService {
     @Transactional
     public ApiResponse<Void> deleteById(Long id) {
         if (!questionRepository.existsById(id)) {
-            throw new NoSuchElementException("Question not found with ID: " + id);
+            throw new NotFoundException("Question not found with ID: " + id);
         }
         questionRepository.deleteById(id);
         return new ApiResponse<>(HttpStatusCodes.OK, "Question deleted successfully", null);

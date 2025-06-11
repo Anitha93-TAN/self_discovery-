@@ -1,5 +1,6 @@
-package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.interpretation.service.implementation;
+package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.interpretation.service.implementations;
 
+import com.self_discovery.self_discovery.selfdiscovery.ExceptionHandler.NotFoundException;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.interpretation.dtos.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.interpretation.service.interfaces.IInterpretationService;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.Interpretation;
@@ -33,7 +34,7 @@ public class InterpretationServiceImpl implements IInterpretationService {
     @Transactional
     public ApiResponse<InterpretationUpdateResponseDTO> getById(Long id) {
         Interpretation interpretation = repository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Interpretation not found with ID: " + id));
+                .orElseThrow(() -> new NotFoundException("Interpretation not found with ID: " + id));
         return new ApiResponse<>(HttpStatusCodes.OK, "Interpretation fetched successfully", toDto(interpretation));
     }
 
@@ -41,7 +42,7 @@ public class InterpretationServiceImpl implements IInterpretationService {
     @Transactional
     public ApiResponse<InterpretationUpdateResponseDTO> update(Long id, InterpretationUpdateRequestDTO dto) {
         Interpretation entity = repository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Interpretation not found with ID: " + id));
+                .orElseThrow(() -> new NotFoundException("Interpretation not found with ID: " + id));
 
         entity.setTitle(dto.getTitle());
         entity.setMinScore(dto.getMinScore());
@@ -63,7 +64,7 @@ public class InterpretationServiceImpl implements IInterpretationService {
     @Transactional
     public ApiResponse<Void> deleteById(Long id) {
         if (!repository.existsById(id)) {
-            throw new NoSuchElementException("Interpretation not found with ID: " + id);
+            throw new NotFoundException("Interpretation not found with ID: " + id);
         }
         repository.deleteById(id);
         return new ApiResponse<>(HttpStatusCodes.OK, "Interpretation deleted successfully", null);

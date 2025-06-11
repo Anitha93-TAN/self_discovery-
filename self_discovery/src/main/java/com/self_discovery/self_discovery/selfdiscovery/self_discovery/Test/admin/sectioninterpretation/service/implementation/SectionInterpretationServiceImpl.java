@@ -1,5 +1,6 @@
 package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.sectioninterpretation.service.implementation;
 
+import com.self_discovery.self_discovery.selfdiscovery.ExceptionHandler.NotFoundException;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.sectioninterpretation.dtos.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.sectioninterpretation.service.interfaces.ISectionInterpretationService;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.SectionInterpretation;
@@ -41,7 +42,7 @@ public class SectionInterpretationServiceImpl implements ISectionInterpretationS
     @Transactional
     public ApiResponse<SectionInterpretationUpdateResponseDTO> update(Long id, SectionInterpretationUpdateRequestDTO dto) {
         SectionInterpretation entity = repository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Section interpretation not found with ID: " + id));
+                .orElseThrow(() -> new NotFoundException("Section interpretation not found with ID: " + id));
 
         entity.setTitle(dto.getTitle());
         entity.setMinScore(dto.getMinScore());

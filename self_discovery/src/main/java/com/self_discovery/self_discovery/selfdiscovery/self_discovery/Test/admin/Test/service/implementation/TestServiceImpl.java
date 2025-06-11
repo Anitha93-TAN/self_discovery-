@@ -1,5 +1,6 @@
 package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.service.implementation;
 
+import com.self_discovery.self_discovery.selfdiscovery.ExceptionHandler.CustomException;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.dtos.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.service.interfaces.ITestService;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.*;
@@ -80,13 +81,13 @@ public class TestServiceImpl implements ITestService {
                             List<OptionValue> expectedValues = Arrays.asList(OptionValue.YES, OptionValue.NO);
 
                             if (!(receivedValues.containsAll(expectedValues) && expectedValues.containsAll(receivedValues))) {
-                                throw new IllegalArgumentException("SINGLE_CHOICE must contain only YES and NO options.");
+                                throw new CustomException("SINGLE_CHOICE must contain only YES and NO options.");
                             }
 
                             AnswerOption yesOption = answerOptionRepository.findByOptionValue(OptionValue.YES)
-                                    .orElseThrow(() -> new IllegalArgumentException("YES option not found in DB"));
+                                    .orElseThrow(() -> new CustomException("YES option not found in DB"));
                             AnswerOption noOption = answerOptionRepository.findByOptionValue(OptionValue.NO)
-                                    .orElseThrow(() -> new IllegalArgumentException("NO option not found in DB"));
+                                    .orElseThrow(() -> new CustomException("NO option not found in DB"));
 
                             options = Arrays.asList(yesOption, noOption);
                             question.setAnswerOptions(new ArrayList<>(options));
@@ -101,11 +102,11 @@ public class TestServiceImpl implements ITestService {
                                 OptionValue optionValue = optionDTO.getOptionValue();
 
                                 if (!validRatingValues.contains(optionValue)) {
-                                    throw new IllegalArgumentException("Invalid RATING option: " + optionValue);
+                                    throw new CustomException("Invalid RATING option: " + optionValue);
                                 }
 
                                 AnswerOption option = answerOptionRepository.findByOptionValue(optionValue)
-                                        .orElseThrow(() -> new IllegalArgumentException("RATING option not found in DB: " + optionValue));
+                                        .orElseThrow(() -> new CustomException("RATING option not found in DB: " + optionValue));
                                 options.add(option);
                             }
 

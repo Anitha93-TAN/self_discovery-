@@ -1,5 +1,6 @@
 package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.recommendation.service.implementation;
 
+import com.self_discovery.self_discovery.selfdiscovery.ExceptionHandler.NotFoundException;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.recommendation.dtos.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.recommendation.service.interfaces.IRecommendationService;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.Recommendation;
@@ -69,7 +70,7 @@ public class RecommendationServiceImpl implements IRecommendationService {
     @Transactional
     public ApiResponse<Void> deleteById(Long id) {
         if (!repository.existsById(id)) {
-            throw new NoSuchElementException("Recommendation not found with ID: " + id);
+            throw new NotFoundException("Recommendation not found with ID: " + id);
         }
         repository.deleteById(id);
         return new ApiResponse<>(HttpStatusCodes.OK, "Recommendation deleted successfully", null);
