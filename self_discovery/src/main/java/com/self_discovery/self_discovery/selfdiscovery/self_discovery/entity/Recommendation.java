@@ -1,6 +1,5 @@
 package com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.registration.domain.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,15 +22,15 @@ public class Recommendation extends BaseEntity {
     private String title;
 
     @ManyToOne
-    @JoinColumn(name = "test_id", nullable = false)
+    @JoinColumn(name = "test_id")
     private Test test;
 
-    @Column(name = "min_score", nullable = false)
+    @Column(name = "min_score")
     private int minScore;
 
-    @Column(name = "max_score", nullable = false)
+    @Column(name = "max_score")
     private int maxScore;
 
-    @Column(name = "recommendation_text", columnDefinition = "TEXT", nullable = false)
+    @Column(name = "recommendation_text")
     private String recommendationText;
 }

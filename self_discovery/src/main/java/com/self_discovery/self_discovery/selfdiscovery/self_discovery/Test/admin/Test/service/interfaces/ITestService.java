@@ -8,7 +8,7 @@ import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin
 import com.self_discovery.self_discovery.selfdiscovery.utils.ApiResponse;
 import java.util.List;
 
-public interface TestService {
+public interface ITestService {
     ApiResponse<TestResponseDTO> createTest(TestRequestDTO requestDto);
     ApiResponse<List<TestResponseDTO>> getAllTests();
     ApiResponse<TestResponseDTO> getTestById(Long testId);

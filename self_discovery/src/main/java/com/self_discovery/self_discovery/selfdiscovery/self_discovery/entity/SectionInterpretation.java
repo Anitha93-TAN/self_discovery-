@@ -25,16 +25,15 @@ public class SectionInterpretation extends BaseEntity {
     private String title;
 
     @ManyToOne
-    @JoinColumn(name = "section_id", nullable = false)
-    @JsonBackReference
+    @JoinColumn(name = "section_id")
     private Section section;
 
-    @Column(name = "min_score", nullable = false)
+    @Column(name = "min_score")
     private int minScore;
 
-    @Column(name = "max_score", nullable = false)
+    @Column(name = "max_score")
     private int maxScore;
 
-    @Column(name = "description", columnDefinition = "TEXT", nullable = false)
+    @Column(name = "description")
     private String description;
 }

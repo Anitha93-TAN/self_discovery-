@@ -4,23 +4,25 @@ import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.dtos.TestResponseDTO;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.dtos.TestUpdateRequestDTO;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.dtos.TestUpdateResponseDTO;
-
-import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.service.interfaces.TestService;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.service.interfaces.ITestService;
 import com.self_discovery.self_discovery.selfdiscovery.utils.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @RestController
-@RequestMapping("/api/v1/tests")
+@RequestMapping("/api/v1/admin/tests")
 public class TestController {
 
     @Autowired
-    private TestService testService;
+    private ITestService testService;
 
     @Operation(summary = "Create a test with sections, questions, and answer options")
     @PostMapping("/section/question/answeroption")
@@ -60,7 +62,7 @@ public class TestController {
     }
 
     @Operation(summary = "Delete all tests")
-    @DeleteMapping
+    @DeleteMapping("/deleteall")
     public ResponseEntity<ApiResponse<Void>> deleteAllTests() {
         ApiResponse<Void> response = testService.deleteAllTests();
         return ResponseEntity.status(response.getStatus()).body(response);

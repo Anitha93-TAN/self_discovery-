@@ -22,18 +22,16 @@ public class AnswerOption extends BaseEntity {
     @Column(name = "answer_option_id")
     private Long answerOptionId;
 
-    @Column(name = "answer_text", nullable = true)
+    @Column(name = "answer_text")
     private String answerText;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "option_value",  nullable = true)
+    @Column(name = "option_value")
     private OptionValue optionValue;
 
     @Column(name = "score")
     private int score;
 
-    @ManyToMany(mappedBy = "answerOptions") // ✅ REMOVED cascade
-    @JsonBackReference
-    @EqualsAndHashCode.Exclude
+    @ManyToMany(mappedBy = "answerOptions")
     private Set<Question> questions;
 }

@@ -23,15 +23,15 @@ public class Interpretation extends BaseEntity {
     private String title;
 
     @ManyToOne
-    @JoinColumn(name = "test_id", nullable = false)
+    @JoinColumn(name = "test_id")
     private Test test;
 
-    @Column(name = "min_score", nullable = false)
+    @Column(name = "min_score")
     private int minScore;
 
-    @Column(name = "max_score", nullable = false)
+    @Column(name = "max_score")
     private int maxScore;
 
-    @Column(name = "description", columnDefinition = "TEXT", nullable = false)
+    @Column(name = "description")
     private String description;
 }

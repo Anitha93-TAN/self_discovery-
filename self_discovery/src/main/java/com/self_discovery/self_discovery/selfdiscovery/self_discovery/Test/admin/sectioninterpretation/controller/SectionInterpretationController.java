@@ -2,45 +2,60 @@ package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admi
 
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.sectioninterpretation.dtos.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.sectioninterpretation.service.interfaces.ISectionInterpretationService;
-import lombok.RequiredArgsConstructor;
+import com.self_discovery.self_discovery.selfdiscovery.utils.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @RestController
-@RequestMapping("/api/v1/sectionInterpretation")
-@RequiredArgsConstructor
+@RequestMapping("/api/v1/admin/sectioninterpretations")
 public class SectionInterpretationController {
 
-    private final ISectionInterpretationService sectionInterpretationService;
+    @Autowired
+    private ISectionInterpretationService sectionInterpretationService;
 
-    @GetMapping
-    public ResponseEntity<List<SectionInterpretationUpdateResponseDTO>> getAll() {
-        return ResponseEntity.ok(sectionInterpretationService.getAll());
+
+    @Operation(summary = "Get all section interpretations")
+    @GetMapping("/getall")
+    public ResponseEntity<ApiResponse<List<SectionInterpretationUpdateResponseDTO>>> getAll() {
+        ApiResponse<List<SectionInterpretationUpdateResponseDTO>> response = sectionInterpretationService.getAll();
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
+    @Operation(summary = "Get section interpretation by ID")
     @GetMapping("/{id}")
-    public ResponseEntity<SectionInterpretationUpdateResponseDTO> getById(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(sectionInterpretationService.getById(id));
+    public ResponseEntity<ApiResponse<SectionInterpretationUpdateResponseDTO>> getById(@PathVariable("id") Long id) {
+        ApiResponse<SectionInterpretationUpdateResponseDTO> response = sectionInterpretationService.getById(id);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
+    @Operation(summary = "Update section interpretation by ID")
     @PutMapping("/{id}")
-    public ResponseEntity<SectionInterpretationUpdateResponseDTO> update(
+    public ResponseEntity<ApiResponse<SectionInterpretationUpdateResponseDTO>> update(
             @PathVariable("id") Long id,
             @RequestBody SectionInterpretationUpdateRequestDTO dto) {
-        return ResponseEntity.ok(sectionInterpretationService.update(id, dto));
+        ApiResponse<SectionInterpretationUpdateResponseDTO> response = sectionInterpretationService.update(id, dto);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> deleteAll() {
-        sectionInterpretationService.deleteAll();
-        return ResponseEntity.noContent().build();
+    @Operation(summary = "Delete all section interpretations")
+    @DeleteMapping("/deleteall")
+    public ResponseEntity<ApiResponse<Void>> deleteAll() {
+        ApiResponse<Void> response = sectionInterpretationService.deleteAll();
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
+    @Operation(summary = "Delete section interpretation by ID")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
-        sectionInterpretationService.deleteById(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ApiResponse<Void>> deleteById(@PathVariable("id") Long id) {
+        ApiResponse<Void> response = sectionInterpretationService.deleteById(id);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 }

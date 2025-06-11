@@ -10,9 +10,6 @@
 		<version>3.2.5</version>
 		<relativePath/>
 	</parent>
-
-
-
 	<groupId>com.self_discovery</groupId>
 	<artifactId>self_discovery</artifactId>
 	<version>0.0.1-SNAPSHOT</version>

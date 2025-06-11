@@ -1,7 +1,7 @@
 package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.service.implementation;
 
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.dtos.*;
-import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.service.interfaces.TestService;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.service.interfaces.ITestService;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.enums.AnswerType;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.enums.OptionValue;
@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 @NoArgsConstructor
-public class TestServiceImpl implements TestService {
+public class TestServiceImpl implements ITestService {
 
     @Autowired
     private TestRepository testRepository;
@@ -170,10 +171,9 @@ public class TestServiceImpl implements TestService {
     @Override
     @Transactional
     public ApiResponse<Void> deleteTestById(Long testId) {
-        if (!testRepository.existsById(testId)) {
-            throw new NoSuchElementException("Test not found with ID: " + testId);
-        }
-        testRepository.deleteById(testId);
+        Test test = testRepository.findById(testId)
+                .orElseThrow(() -> new NoSuchElementException("Test not found with ID: " + testId));
+        testRepository.delete(test);
         return voidResponseHandler.success(null, "Test deleted successfully", HttpStatusCodes.OK);
     }
 
@@ -184,20 +184,20 @@ public class TestServiceImpl implements TestService {
         return voidResponseHandler.success(null, "All tests deleted successfully", HttpStatusCodes.OK);
     }
 
+
     @Override
     @Transactional
-    public ApiResponse<TestUpdateResponseDTO> updateTest(Long testId, TestUpdateRequestDTO updateDTO) {
+    public ApiResponse<TestUpdateResponseDTO> updateTest(Long testId, TestUpdateRequestDTO requestDTO) {
         Test test = testRepository.findById(testId)
-                .orElseThrow(() -> new NoSuchElementException("Test not found with ID: " + testId));
+                .orElseThrow(() -> new NoSuchElementException("Test not found with id: " + testId));
+        test.setTestTitle(requestDTO.getTestTitle());
+        test.setDescription(requestDTO.getDescription());
+        test.setLinkExpiryDate(requestDTO.getLinkExpiryDate());
+        testRepository.save(test);
+        TestUpdateResponseDTO responseDTO = mapToTestUpdateResponseDTO(test);
 
-        test.setTestTitle(updateDTO.getTestTitle());
-        test.setDescription(updateDTO.getDescription());
-        test.setLinkExpiryDate(updateDTO.getLinkExpiryDate());
-
-        Test saved = testRepository.save(test);
-        return listResponseUpdateHandler.success(mapToTestUpdateResponseDTO(saved), "Test updated successfully", HttpStatusCodes.OK);
+        return new ApiResponse<>(HttpStatus.OK.value(), "Test updated successfully", responseDTO);
     }
-
 
 
     private Test mapToTestEntity(TestRequestDTO dto) {
@@ -231,7 +231,6 @@ public class TestServiceImpl implements TestService {
         dto.setLinkExpiryDate(test.getLinkExpiryDate());
         return dto;
     }
-
 
     private SectionInterpretation mapToSectionInterpretationEntity(SectionInterpretationRequestDTO dto) {
         SectionInterpretation si = new SectionInterpretation();

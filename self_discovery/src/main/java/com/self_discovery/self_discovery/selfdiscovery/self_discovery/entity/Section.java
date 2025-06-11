@@ -22,23 +22,22 @@ public class Section extends BaseEntity {
     private Long sectionId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "test_id", nullable = false)
+    @JoinColumn(name = "test_id")
     private Test test;
 
-    @Column(name = "section_title", nullable = false)
+    @Column(name = "section_title")
     private String sectionTitle;
 
-    @Column(name = "section_order", nullable = false)
+    @Column(name = "section_order")
     private int sectionOrder;
 
-    @Column(name = "randomize_questions", nullable = false)
+    @Column(name = "randomize_questions")
     private boolean randomizeQuestions = false;
 
-    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL)
     private List<Question> questions;
 
-    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL)
     private List<SectionInterpretation> sectionInterpretations;
 
 }

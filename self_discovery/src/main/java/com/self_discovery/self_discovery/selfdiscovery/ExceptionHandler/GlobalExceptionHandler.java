@@ -139,7 +139,7 @@ public class GlobalExceptionHandler{
 	}
 
 	// Handle UsernameNotFoundException (e.g., user details not found)
-	/*@ExceptionHandler(UsernameNotFoundException.class)
+	/* @ExceptionHandler(UsernameNotFoundException.class)
 	public ResponseEntity<ApiResponse<?>> handleUsernameNotFoundException(UsernameNotFoundException ex) {
 	    ApiResponse<?> response = new ApiResponse<>();
 	    response.setStatus(HttpStatusCodes.CONFLICT);

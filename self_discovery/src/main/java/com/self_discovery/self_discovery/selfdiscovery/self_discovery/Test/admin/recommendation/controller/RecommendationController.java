@@ -1,45 +1,59 @@
-package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.recommendation;
+package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.recommendation.controller;
 
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.recommendation.dtos.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.recommendation.service.interfaces.IRecommendationService;
-import lombok.RequiredArgsConstructor;
+import com.self_discovery.self_discovery.selfdiscovery.utils.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @RestController
-@RequestMapping("/api/v1/recommendations")
-@RequiredArgsConstructor
+@RequestMapping("/api/v1/admin/recommendations")
 public class RecommendationController {
 
-    private final IRecommendationService recommendationService;
+    @Autowired
+    private IRecommendationService recommendationService;
 
-    @GetMapping
-    public ResponseEntity<List<RecommendationUpdateResponseDTO>> getAll() {
-        return ResponseEntity.ok(recommendationService.getAll());
+    @Operation(summary = "Get all recommendations")
+    @GetMapping("/getall")
+    public ResponseEntity<ApiResponse<List<RecommendationUpdateResponseDTO>>> getAll() {
+        ApiResponse<List<RecommendationUpdateResponseDTO>> response = recommendationService.getAll();
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
+    @Operation(summary = "Get recommendation by ID")
     @GetMapping("/{id}")
-    public ResponseEntity<RecommendationUpdateResponseDTO> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(recommendationService.getById(id));
+    public ResponseEntity<ApiResponse<RecommendationUpdateResponseDTO>> getById(@PathVariable Long id) {
+        ApiResponse<RecommendationUpdateResponseDTO> response = recommendationService.getById(id);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
+    @Operation(summary = "Update recommendation by ID")
     @PutMapping("/{id}")
-    public ResponseEntity<RecommendationUpdateResponseDTO> update(
+    public ResponseEntity<ApiResponse<RecommendationUpdateResponseDTO>> update(
             @PathVariable Long id,
             @RequestBody RecommendationUpdateRequestDTO dto) {
-        return ResponseEntity.ok(recommendationService.update(id, dto));
+        ApiResponse<RecommendationUpdateResponseDTO> response = recommendationService.update(id, dto);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> deleteAll() {
-        recommendationService.deleteAll();
-        return ResponseEntity.noContent().build();
+    @Operation(summary = "Delete all recommendations")
+    @DeleteMapping("/deleteall")
+    public ResponseEntity<ApiResponse<Void>> deleteAll() {
+        ApiResponse<Void> response = recommendationService.deleteAll();
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
+    @Operation(summary = "Delete recommendation by ID")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
-        recommendationService.deleteById(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ApiResponse<Void>> deleteById(@PathVariable Long id) {
+        ApiResponse<Void> response = recommendationService.deleteById(id);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 }

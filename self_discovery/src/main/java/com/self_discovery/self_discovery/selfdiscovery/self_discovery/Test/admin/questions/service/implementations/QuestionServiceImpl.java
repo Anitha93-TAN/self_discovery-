@@ -7,34 +7,49 @@ import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.Que
 import com.self_discovery.self_discovery.selfdiscovery.repository.AnswerOptionRepository;
 import com.self_discovery.self_discovery.selfdiscovery.repository.QuestionRepository;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.dtos.AnswerOptionResponseDTO;
-import lombok.RequiredArgsConstructor;
+import com.self_discovery.self_discovery.selfdiscovery.utils.ApiResponse;
+import com.self_discovery.self_discovery.selfdiscovery.utils.HttpStatusCodes;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class QuestionServiceImpl implements IQuestionService {
 
-    private final QuestionRepository questionRepository;
-    private final AnswerOptionRepository answerOptionRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private AnswerOptionRepository answerOptionRepository;
 
     @Override
-    public List<QuestionUpdateResponseDTO> getAll() {
-        return questionRepository.findAll().stream().map(this::toDto).collect(Collectors.toList());
+    @Transactional
+    public ApiResponse<List<QuestionUpdateResponseDTO>> getAll() {
+        List<QuestionUpdateResponseDTO> list = questionRepository.findAll().stream().map(this::toDto).collect(Collectors.toList());
+        return new ApiResponse<>(HttpStatusCodes.OK, "Questions fetched successfully", list);
     }
 
     @Override
-    public QuestionUpdateResponseDTO getById(Long id) {
-        return questionRepository.findById(id).map(this::toDto)
-                .orElseThrow(() -> new RuntimeException("Question not found"));
-    }
-
-    @Override
-    public QuestionUpdateResponseDTO update(Long id, QuestionUpdateRequestDTO dto) {
+    @Transactional
+    public ApiResponse<QuestionUpdateResponseDTO> getById(Long id) {
         Question question = questionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Question not found"));
+                .orElseThrow(() -> new NoSuchElementException("Question not found with ID: " + id));
+        return new ApiResponse<>(HttpStatusCodes.OK, "Question fetched successfully", toDto(question));
+    }
+
+    @Override
+    @Transactional
+    public ApiResponse<QuestionUpdateResponseDTO> update(Long id, QuestionUpdateRequestDTO dto) {
+        Question question = questionRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Question not found with ID: " + id));
 
         question.setQuestionText(dto.getQuestionText());
         question.setAnswerType(dto.getAnswerType());
@@ -42,21 +57,29 @@ public class QuestionServiceImpl implements IQuestionService {
 
         List<AnswerOption> answerOptions = dto.getAnswerOptions().stream()
                 .map(opt -> answerOptionRepository.findById(opt.getAnswerOptionId())
-                        .orElseThrow(() -> new RuntimeException("AnswerOption not found")))
+                        .orElseThrow(() -> new NoSuchElementException("AnswerOption not found with ID: " + opt.getAnswerOptionId())))
                 .collect(Collectors.toList());
 
         question.setAnswerOptions(answerOptions);
-        return toDto(questionRepository.save(question));
+        Question updated = questionRepository.save(question);
+        return new ApiResponse<>(HttpStatusCodes.OK, "Question updated successfully", toDto(updated));
     }
 
     @Override
-    public void deleteAll() {
+    @Transactional
+    public ApiResponse<Void> deleteAll() {
         questionRepository.deleteAll();
+        return new ApiResponse<>(HttpStatusCodes.OK, "All questions deleted successfully", null);
     }
 
     @Override
-    public void deleteById(Long id) {
+    @Transactional
+    public ApiResponse<Void> deleteById(Long id) {
+        if (!questionRepository.existsById(id)) {
+            throw new NoSuchElementException("Question not found with ID: " + id);
+        }
         questionRepository.deleteById(id);
+        return new ApiResponse<>(HttpStatusCodes.OK, "Question deleted successfully", null);
     }
 
     private QuestionUpdateResponseDTO toDto(Question q) {

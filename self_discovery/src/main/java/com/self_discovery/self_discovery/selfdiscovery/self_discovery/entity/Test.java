@@ -1,6 +1,5 @@
 package com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.registration.domain.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,21 +18,21 @@ public class Test extends BaseEntity {
     @Column(name="test_id")
     private Long testId;
 
-    @Column(name="title",nullable = false, length = 255)
+    @Column(name="title")
     private String testTitle;
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "description")
     private String description;
 
     @Column(name="link_expiry_date")
     private LocalDate linkExpiryDate;
 
-    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
     private List<Section> sections;
 
-    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
     private List<Interpretation> interpretations;
 
-    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
     private List<Recommendation> recommendations;
 }

@@ -4,9 +4,14 @@ import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.interpretation.service.interfaces.IInterpretationService;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.Interpretation;
 import com.self_discovery.self_discovery.selfdiscovery.repository.InterpretationRepository;
+import com.self_discovery.self_discovery.selfdiscovery.utils.ApiResponse;
+import com.self_discovery.self_discovery.selfdiscovery.utils.HttpStatusCodes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -16,37 +21,52 @@ public class InterpretationServiceImpl implements IInterpretationService {
     private final InterpretationRepository repository;
 
     @Override
-    public List<InterpretationUpdateResponseDTO> getAll() {
-        return repository.findAll().stream().map(this::toDto).collect(Collectors.toList());
+    @Transactional
+    public ApiResponse<List<InterpretationUpdateResponseDTO>> getAll() {
+        List<InterpretationUpdateResponseDTO> list = repository.findAll().stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+        return new ApiResponse<>(HttpStatusCodes.OK, "Interpretations fetched successfully", list);
     }
 
     @Override
-    public InterpretationUpdateResponseDTO getById(Long id) {
-        return repository.findById(id).map(this::toDto)
-                .orElseThrow(() -> new RuntimeException("Interpretation not found"));
+    @Transactional
+    public ApiResponse<InterpretationUpdateResponseDTO> getById(Long id) {
+        Interpretation interpretation = repository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Interpretation not found with ID: " + id));
+        return new ApiResponse<>(HttpStatusCodes.OK, "Interpretation fetched successfully", toDto(interpretation));
     }
 
     @Override
-    public InterpretationUpdateResponseDTO update(Long id, InterpretationUpdateRequestDTO dto) {
+    @Transactional
+    public ApiResponse<InterpretationUpdateResponseDTO> update(Long id, InterpretationUpdateRequestDTO dto) {
         Interpretation entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Interpretation not found"));
+                .orElseThrow(() -> new NoSuchElementException("Interpretation not found with ID: " + id));
 
         entity.setTitle(dto.getTitle());
         entity.setMinScore(dto.getMinScore());
         entity.setMaxScore(dto.getMaxScore());
         entity.setDescription(dto.getDescription());
 
-        return toDto(repository.save(entity));
+        Interpretation updated = repository.save(entity);
+        return new ApiResponse<>(HttpStatusCodes.OK, "Interpretation updated successfully", toDto(updated));
     }
 
     @Override
-    public void deleteAll() {
+    @Transactional
+    public ApiResponse<Void> deleteAll() {
         repository.deleteAll();
+        return new ApiResponse<>(HttpStatusCodes.OK, "All interpretations deleted successfully", null);
     }
 
     @Override
-    public void deleteById(Long id) {
+    @Transactional
+    public ApiResponse<Void> deleteById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new NoSuchElementException("Interpretation not found with ID: " + id);
+        }
         repository.deleteById(id);
+        return new ApiResponse<>(HttpStatusCodes.OK, "Interpretation deleted successfully", null);
     }
 
     private InterpretationUpdateResponseDTO toDto(Interpretation entity) {

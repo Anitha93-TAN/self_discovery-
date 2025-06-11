@@ -1,7 +1,5 @@
 package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.interpretation.dtos;
 
-import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.Test;
-import jakarta.persistence.*;
 import lombok.Data;
 
 @Data

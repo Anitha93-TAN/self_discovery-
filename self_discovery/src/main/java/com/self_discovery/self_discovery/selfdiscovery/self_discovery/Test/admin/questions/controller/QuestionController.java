@@ -2,42 +2,58 @@ package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admi
 
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.questions.dtos.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.questions.service.interfaces.IQuestionService;
-import lombok.RequiredArgsConstructor;
+import com.self_discovery.self_discovery.selfdiscovery.utils.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @RestController
-@RequestMapping("/api/v1/questions")
-@RequiredArgsConstructor
+@RequestMapping("/api/v1/admin/questions")
 public class QuestionController {
 
-    private final IQuestionService questionService;
+    @Autowired
+    private IQuestionService questionService;
 
-    @GetMapping
-    public ResponseEntity<List<QuestionUpdateResponseDTO>> getAll() {
-        return ResponseEntity.ok(questionService.getAll());
+    @Operation(summary = "Get all questions")
+    @GetMapping("/getall")
+    public ResponseEntity<ApiResponse<List<QuestionUpdateResponseDTO>>> getAll() {
+        ApiResponse<List<QuestionUpdateResponseDTO>> response = questionService.getAll();
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
+    @Operation(summary = "Get question by ID")
     @GetMapping("/{id}")
-    public ResponseEntity<QuestionUpdateResponseDTO> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(questionService.getById(id));
+    public ResponseEntity<ApiResponse<QuestionUpdateResponseDTO>> getById(@PathVariable Long id) {
+        ApiResponse<QuestionUpdateResponseDTO> response = questionService.getById(id);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
+    @Operation(summary = "Update question by ID")
     @PutMapping("/{id}")
-    public ResponseEntity<QuestionUpdateResponseDTO> update(@PathVariable Long id, @RequestBody QuestionUpdateRequestDTO dto) {
-        return ResponseEntity.ok(questionService.update(id, dto));
+    public ResponseEntity<ApiResponse<QuestionUpdateResponseDTO>> update(
+            @PathVariable Long id,
+            @RequestBody QuestionUpdateRequestDTO dto) {
+        ApiResponse<QuestionUpdateResponseDTO> response = questionService.update(id, dto);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> deleteAll() {
-        questionService.deleteAll();
-        return ResponseEntity.noContent().build();
+    @Operation(summary = "Delete all questions")
+    @DeleteMapping("/deleteall")
+    public ResponseEntity<ApiResponse<Void>> deleteAll() {
+        ApiResponse<Void> response = questionService.deleteAll();
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
+    @Operation(summary = "Delete question by ID")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
-        questionService.deleteById(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ApiResponse<Void>> deleteById(@PathVariable Long id) {
+        ApiResponse<Void> response = questionService.deleteById(id);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 }

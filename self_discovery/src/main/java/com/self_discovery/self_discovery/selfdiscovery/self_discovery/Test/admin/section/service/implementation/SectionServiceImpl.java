@@ -4,50 +4,74 @@ import com.self_discovery.self_discovery.selfdiscovery.repository.SectionReposit
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.section.dtos.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.section.service.interfaces.ISectionService;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.Section;
-import lombok.RequiredArgsConstructor;
+import com.self_discovery.self_discovery.selfdiscovery.utils.ApiResponse;
+import com.self_discovery.self_discovery.selfdiscovery.utils.HttpStatusCodes;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class SectionServiceImpl implements ISectionService {
 
-    private final SectionRepository sectionRepository;
+    @Autowired
+    private SectionRepository sectionRepository;
 
     @Override
-    public List<SectionUpdateResponseDTO> getAllSections() {
-        return sectionRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+    @Transactional
+    public ApiResponse<List<SectionUpdateResponseDTO>> getAllSections() {
+        List<SectionUpdateResponseDTO> list = sectionRepository.findAll().stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+        return new ApiResponse<>(HttpStatusCodes.OK, "Sections fetched successfully", list);
     }
 
     @Override
-    public SectionUpdateResponseDTO getSectionById(Long id) {
+    @Transactional
+    public ApiResponse<SectionUpdateResponseDTO> getSectionById(Long id) {
         Section section = sectionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Section not found"));
-        return toDTO(section);
+                .orElseThrow(() -> new NoSuchElementException("Section not found with ID: " + id));
+        SectionUpdateResponseDTO dto = toDTO(section);
+        return new ApiResponse<>(HttpStatusCodes.OK, "Section fetched successfully", dto);
     }
 
     @Override
-    public SectionUpdateResponseDTO updateSection(Long id, SectionUpdateRequestDTO dto) {
+    @Transactional
+    public ApiResponse<SectionUpdateResponseDTO> updateSection(Long id, SectionUpdateRequestDTO dto) {
         Section section = sectionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Section not found"));
+                .orElseThrow(() -> new NoSuchElementException("Section not found with ID: " + id));
 
         section.setSectionTitle(dto.getSectionTitle());
         section.setSectionOrder(dto.getSectionOrder());
         section.setRandomizeQuestions(dto.isRandomizeQuestions());
 
-        return toDTO(sectionRepository.save(section));
+        Section updated = sectionRepository.save(section);
+        SectionUpdateResponseDTO responseDTO = toDTO(updated);
+        return new ApiResponse<>(HttpStatusCodes.OK, "Section updated successfully", responseDTO);
     }
 
     @Override
-    public void deleteAllSections() {
+    @Transactional
+    public ApiResponse<Void> deleteAllSections() {
         sectionRepository.deleteAll();
+        return new ApiResponse<>(HttpStatusCodes.OK, "All sections deleted successfully", null);
     }
 
     @Override
-    public void deleteSectionById(Long id) {
+    @Transactional
+    public ApiResponse<Void> deleteSectionById(Long id) {
+        if (!sectionRepository.existsById(id)) {
+            throw new NoSuchElementException("Section not found with ID: " + id);
+        }
         sectionRepository.deleteById(id);
+        return new ApiResponse<>(HttpStatusCodes.OK, "Section deleted successfully", null);
     }
 
     private SectionUpdateResponseDTO toDTO(Section section) {
