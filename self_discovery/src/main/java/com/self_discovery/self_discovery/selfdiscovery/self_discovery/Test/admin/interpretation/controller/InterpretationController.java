@@ -38,7 +38,7 @@ public class InterpretationController {
     public ResponseEntity<ApiResponse<InterpretationUpdateResponseDTO>> update(
             @PathVariable Long id,
             @RequestBody InterpretationUpdateRequestDTO dto) {
-        return ResponseEntity.status(HttpStatusCodes.OK).body(interpretationService.update(id, dto));
+        return ResponseEntity.status(HttpStatusCodes.OK).body(interpretationService.update(id,dto));
     }
 
     @Operation(summary = "Delete all interpretations")

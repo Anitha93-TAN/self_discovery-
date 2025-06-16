@@ -3,14 +3,13 @@ package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admi
 import com.self_discovery.self_discovery.selfdiscovery.ExceptionHandler.NotFoundException;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.recommendation.dtos.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.recommendation.service.interfaces.IRecommendationService;
-import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.Recommendation;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entities.admin.Recommendation;
 import com.self_discovery.self_discovery.selfdiscovery.repository.RecommendationRepository;
 import com.self_discovery.self_discovery.selfdiscovery.utils.ApiResponse;
 import com.self_discovery.self_discovery.selfdiscovery.utils.HttpStatusCodes;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,7 +48,7 @@ public class RecommendationServiceImpl implements IRecommendationService {
     public ApiResponse<RecommendationUpdateResponseDTO> update(Long id, RecommendationUpdateRequestDTO dto) {
         Recommendation entity = repository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Recommendation not found with ID: " + id));
-
+//dtoToEntity conversion
         entity.setTitle(dto.getTitle());
         entity.setMinScore(dto.getMinScore());
         entity.setMaxScore(dto.getMaxScore());

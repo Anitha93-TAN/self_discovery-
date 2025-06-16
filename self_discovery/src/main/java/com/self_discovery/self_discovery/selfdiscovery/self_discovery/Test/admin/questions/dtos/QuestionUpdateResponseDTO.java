@@ -12,5 +12,6 @@ public class QuestionUpdateResponseDTO {
     private String questionText;
     private AnswerType answerType;
     private int questionOrder;
-    private List<AnswerOptionResponseDTO> answerOptions;
+    private boolean customSingleChoice;
+    private List<AnswerOptionUpdateRequestDTO> answerOptions;
 }

@@ -4,7 +4,7 @@ import com.self_discovery.self_discovery.selfdiscovery.ExceptionHandler.NotFound
 import com.self_discovery.self_discovery.selfdiscovery.repository.SectionRepository;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.section.dtos.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.section.service.interfaces.ISectionService;
-import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.Section;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entities.admin.Section;
 import com.self_discovery.self_discovery.selfdiscovery.utils.ApiResponse;
 import com.self_discovery.self_discovery.selfdiscovery.utils.HttpStatusCodes;
 import lombok.AllArgsConstructor;
@@ -48,7 +48,7 @@ public class SectionServiceImpl implements ISectionService {
     public ApiResponse<SectionUpdateResponseDTO> updateSection(Long id, SectionUpdateRequestDTO dto) {
         Section section = sectionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Section not found with ID: " + id));
-
+//dtoToEntity conversion
         section.setSectionTitle(dto.getSectionTitle());
         section.setSectionOrder(dto.getSectionOrder());
         section.setRandomizeQuestions(dto.isRandomizeQuestions());

@@ -1,20 +1,20 @@
-package com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity;
+package com.self_discovery.self_discovery.selfdiscovery.self_discovery.entities.admin;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.enums.OptionValue;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.registration.domain.base.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 
 import java.util.Set;
 
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "answer_option")
 public class AnswerOption extends BaseEntity {
 
     @Id
@@ -34,4 +34,8 @@ public class AnswerOption extends BaseEntity {
 
     @ManyToMany(mappedBy = "answerOptions")
     private Set<Question> questions;
+
+   /* @OneToMany(mappedBy = "answerOption",cascade = CascadeType.ALL)
+    private List<QuestionResponse> questionResponses; */
+
 }

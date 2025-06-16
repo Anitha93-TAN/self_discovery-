@@ -1,10 +1,10 @@
 package com.self_discovery.self_discovery.selfdiscovery.self_discovery.registration.domain.entity;
 
-import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.Test;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entities.admin.Test;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.registration.domain.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-
+/*
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,4 +28,4 @@ public class TestResult extends BaseEntity {
     @Column(name = "total_score", nullable = false)
     private int totalScore;
 
-}
+}*/

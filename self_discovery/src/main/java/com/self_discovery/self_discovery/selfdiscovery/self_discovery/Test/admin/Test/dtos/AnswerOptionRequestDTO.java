@@ -8,6 +8,4 @@ public class AnswerOptionRequestDTO {
     private String answerText;     // custom MCQ text option
     private OptionValue optionValue;    // enum string for predefined option
     private int score;
-
-
 }

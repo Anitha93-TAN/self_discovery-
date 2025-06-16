@@ -3,7 +3,7 @@ package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admi
 import com.self_discovery.self_discovery.selfdiscovery.ExceptionHandler.CustomException;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.dtos.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.Test.service.interfaces.ITestService;
-import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.*;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entities.admin.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.enums.AnswerType;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.enums.OptionValue;
 import com.self_discovery.self_discovery.selfdiscovery.repository.AnswerOptionRepository;

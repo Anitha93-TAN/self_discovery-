@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class InterpretationResponseDTO {
-
     private Long interpretationId;
     private String title;
     private int minScore;

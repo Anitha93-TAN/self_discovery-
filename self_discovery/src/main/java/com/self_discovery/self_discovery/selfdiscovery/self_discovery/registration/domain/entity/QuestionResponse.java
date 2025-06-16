@@ -1,11 +1,11 @@
 package com.self_discovery.self_discovery.selfdiscovery.self_discovery.registration.domain.entity;
 
-import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.AnswerOption;
-import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.Question;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entities.admin.AnswerOption;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entities.admin.Question;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.registration.domain.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-
+/*
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,4 +33,4 @@ public class QuestionResponse extends BaseEntity {
     @Column(name = "rating_value")
     private Integer ratingValue;
 
-}
+}*/

@@ -1,12 +1,15 @@
-package com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity;
+package com.self_discovery.self_discovery.selfdiscovery.self_discovery.entities.admin;
 
+
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entities.user.TestResult;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.registration.domain.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
 import java.util.List;
 
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -35,4 +38,7 @@ public class Test extends BaseEntity {
 
     @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
     private List<Recommendation> recommendations;
+
+   @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
+    private List<TestResult> testResults;
 }

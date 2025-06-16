@@ -3,7 +3,7 @@ package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admi
 import com.self_discovery.self_discovery.selfdiscovery.ExceptionHandler.NotFoundException;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.sectioninterpretation.dtos.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.sectioninterpretation.service.interfaces.ISectionInterpretationService;
-import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.SectionInterpretation;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entities.admin.SectionInterpretation;
 import com.self_discovery.self_discovery.selfdiscovery.repository.SectionInterpretationRepository;
 import com.self_discovery.self_discovery.selfdiscovery.utils.ApiResponse;
 import com.self_discovery.self_discovery.selfdiscovery.utils.HttpStatusCodes;
@@ -43,7 +43,7 @@ public class SectionInterpretationServiceImpl implements ISectionInterpretationS
     public ApiResponse<SectionInterpretationUpdateResponseDTO> update(Long id, SectionInterpretationUpdateRequestDTO dto) {
         SectionInterpretation entity = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Section interpretation not found with ID: " + id));
-
+//dtoToEntity conversion
         entity.setTitle(dto.getTitle());
         entity.setMinScore(dto.getMinScore());
         entity.setMaxScore(dto.getMaxScore());

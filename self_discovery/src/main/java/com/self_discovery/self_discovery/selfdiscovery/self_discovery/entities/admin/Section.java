@@ -1,15 +1,15 @@
-package com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity;
+package com.self_discovery.self_discovery.selfdiscovery.self_discovery.entities.admin;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entities.user.SectionResponse;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.registration.domain.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
-import java.util.Set;
 
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -39,5 +39,8 @@ public class Section extends BaseEntity {
 
     @OneToMany(mappedBy = "section", cascade = CascadeType.ALL)
     private List<SectionInterpretation> sectionInterpretations;
+
+    @OneToMany(mappedBy = "section",cascade = CascadeType.ALL )
+    private List<SectionResponse> sectionResponses;
 
 }

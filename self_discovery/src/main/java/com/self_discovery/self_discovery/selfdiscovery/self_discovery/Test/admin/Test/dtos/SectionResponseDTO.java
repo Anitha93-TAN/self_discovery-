@@ -11,7 +11,4 @@ public class SectionResponseDTO {
     private boolean randomizeQuestions;
     private List<QuestionResponseDTO> questions;
     private List<SectionInterpretationResponseDTO> sectionInterpretationResponse;
-
-
-
 }

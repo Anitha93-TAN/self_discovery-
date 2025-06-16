@@ -3,23 +3,27 @@ package com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admi
 import com.self_discovery.self_discovery.selfdiscovery.ExceptionHandler.NotFoundException;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.interpretation.dtos.*;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.Test.admin.interpretation.service.interfaces.IInterpretationService;
-import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity.Interpretation;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entities.admin.Interpretation;
 import com.self_discovery.self_discovery.selfdiscovery.repository.InterpretationRepository;
 import com.self_discovery.self_discovery.selfdiscovery.utils.ApiResponse;
 import com.self_discovery.self_discovery.selfdiscovery.utils.HttpStatusCodes;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Service
-@RequiredArgsConstructor
 public class InterpretationServiceImpl implements IInterpretationService {
 
-    private final InterpretationRepository repository;
+    @Autowired
+    private InterpretationRepository repository;
 
     @Override
     @Transactional
@@ -43,7 +47,7 @@ public class InterpretationServiceImpl implements IInterpretationService {
     public ApiResponse<InterpretationUpdateResponseDTO> update(Long id, InterpretationUpdateRequestDTO dto) {
         Interpretation entity = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Interpretation not found with ID: " + id));
-
+//dtoToEntity conversion
         entity.setTitle(dto.getTitle());
         entity.setMinScore(dto.getMinScore());
         entity.setMaxScore(dto.getMaxScore());

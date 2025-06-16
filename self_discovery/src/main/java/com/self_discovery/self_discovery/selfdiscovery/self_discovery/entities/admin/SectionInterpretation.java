@@ -1,15 +1,13 @@
-package com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity;
+package com.self_discovery.self_discovery.selfdiscovery.self_discovery.entities.admin;
 
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.registration.domain.base.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity

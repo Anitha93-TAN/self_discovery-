@@ -1,21 +1,17 @@
-package com.self_discovery.self_discovery.selfdiscovery.self_discovery.entity;
+package com.self_discovery.self_discovery.selfdiscovery.self_discovery.entities.admin;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.self_discovery.self_discovery.selfdiscovery.self_discovery.entities.user.QuestionResponse;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.registration.domain.base.BaseEntity;
 import com.self_discovery.self_discovery.selfdiscovery.self_discovery.enums.AnswerType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
-import java.util.Set;
 
 
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -49,4 +45,9 @@ public class Question extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "answer_option_id")
     )
     private List<AnswerOption> answerOptions;
+
+
+    @OneToMany(mappedBy = "question",cascade = CascadeType.ALL)
+    private List<QuestionResponse> questionResponses;
+
 }
